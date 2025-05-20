@@ -27,5 +27,5 @@ app.use( express.static('public'));
 //Lectura y parsero del body
 app.use( express.json());
 
-//Rutas
+//Ruta
 app.use('/api/clients', require('./routes/clients'));
