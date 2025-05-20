@@ -2,13 +2,35 @@ const {response} = require('express');
 const Client = require('../models/Client');
 
 const getClients = async(req, res = response) =>{
-
     const clients = await Client.find();
-    
     res.json({
         ok:true,
         clients
     })
+}
+
+const getClientByDNI = async(req, res =response) =>{
+
+    const { dni } = req.params;
+    try {
+        const client = await Client.findOne({ dni });
+        if (!client) {
+          return res.status(404).json({
+            ok: false,
+            msg: `Cliente con DNI ${dni} no encontrado.`
+          });
+        }
+        res.json({
+          ok: true,
+          client
+        });
+        } catch (error) {
+        console.error('Error al obtener cliente por DNI:', error);
+        res.status(500).json({
+          ok: false,
+          msg: 'Hable con el administrador'
+        });
+    }
 }
 
 const createClient = async(req, res = response)  =>{
@@ -37,11 +59,9 @@ const updateClient = (req, res = response) =>{
 }
 
 const deleteClient = async(req, res = response) =>{
-
-    const clientId = req.params.id;
-
+    const {dni} = req.params;
     try {
-        const client = await Client.findById(clientId);
+        const client = await Client.findOneAndDelete({dni});
         if( !client ){
             return res.status(404).json({
                 ok: false,
@@ -49,7 +69,6 @@ const deleteClient = async(req, res = response) =>{
             })
         }
 
-        await Client.findByIdAndDelete(clientId);
          res.json({ok:true});
 
     } catch (error) {
@@ -60,15 +79,11 @@ const deleteClient = async(req, res = response) =>{
             msg: 'Hable con el administrador'
         })
     }
-   
 }
-
-
-
-
 
 module.exports = {
     getClients,
+    getClientByDNI,
     createClient,
     updateClient,
     deleteClient

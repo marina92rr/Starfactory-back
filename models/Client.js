@@ -28,7 +28,7 @@ const ClientSchema = Schema({
     },
     isTeacher: {
         type: Boolean,
-        required: true
+        required: false
     },
     
 })

@@ -1,8 +1,11 @@
 
 const express = require('express');
+
+const path = require('path');
 require('dotenv').config();     //configurar archivo env
 const cors = require('cors');
-const {dbConnection} = require('./database/config')
+const {dbConnection} = require('./database/config');
+const { request } = require('http');
 
 //Crear servidor de Express
 const app = express();
@@ -26,4 +29,4 @@ app.use( express.static('public'));
 app.use( express.json());
 
 //Rutas
-app.use('/api/clients', require('./routes/clients'));
+app.use('/clients', require('./routes/clients'));

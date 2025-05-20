@@ -4,15 +4,17 @@
 const {Router} = require('express'); //Importar ruta
 const {check} = require('express-validator');
 
-const { getClients, createClient, updateClient, deleteClient } = require('../constrollers/clients');
+const { getClients, createClient, updateClient, deleteClient, getClientByDNI } = require('../constrollers/clients');
 const { validateFields } = require('../middlewares/validate-fields');
-
 
 //-----Rutas-----
 const router = Router();
 
 //Obtener clientes
 router.get( '/', getClients);
+
+//Obtener 1 Cliente
+router.get('/:dni', getClientByDNI);
 
 //Crear nuevo cliente
 router.post( 
@@ -28,9 +30,9 @@ router.post(
      createClient);
 
 //Actualizar cliente
-router.put( '/:id', updateClient);
+router.put( '/:dni', updateClient);
 
 //eliminar cliente
-router.delete( '/:id', deleteClient);
+router.delete( '/:dni', deleteClient);
 
 module.exports = router;
