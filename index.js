@@ -6,14 +6,19 @@ const cors = require('cors');
 const {dbConnection} = require('./database/config');
 const { request } = require('http');
 
+
+
 //Crear servidor de Express
 const app = express();
 
+app.use(cors({
+  origin: ['http://localhost:5173'],
+  credentials: true,
+  optionsSuccessStatus: 200
+}));
+
 //Base de Datos DB
 dbConnection();
-
-//desbloquear conexion
-app.use(cors());
 
 //Escuchar peticion
 app.listen( process.env.PORT, () => {
@@ -28,4 +33,4 @@ app.use( express.static('public'));
 app.use( express.json());
 
 //Ruta
-app.use('/api/clients', require('./routes/clients'));
+app.use('/clients', require('./routes/clients'));
