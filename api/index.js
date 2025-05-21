@@ -3,7 +3,7 @@ const express = require('express');
 
 require('dotenv').config();     //configurar archivo env
 const cors = require('cors');
-const {dbConnection} = require('./database/config');
+const {dbConnection} = require('../database/config');
 const { request } = require('http');
 
 
@@ -21,9 +21,9 @@ app.use(cors({
 dbConnection();
 
 //Escuchar peticion
-app.listen( process.env.PORT, () => {
-    console.log(`Servidor ejecutandose en Puerto ${process.env.PORT}`);
-})
+//app.listen( process.env.PORT, () => {
+//    console.log(`Servidor ejecutandose en Puerto ${process.env.PORT}`);
+//})
 
 
 //Directorio publico
@@ -33,4 +33,4 @@ app.use( express.static('public'));
 app.use( express.json());
 
 //Ruta
-app.use('/clients', require('./routes/clients'));
+app.use('/clients', require('../routes/clients'));
