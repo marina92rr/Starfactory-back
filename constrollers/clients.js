@@ -37,9 +37,9 @@ const createClient = async(req, res = response)  =>{
     try {
         const client = new Client(req.body);    //Crear nuevo objeto cliente
         await client.save();   
-       res.status(201).json({
+       res.status(400).json({
         ok:true,
-        msg: 'Cliente creado', client,
+        msg: 'Cliente Creado con éxito', client,
     }) 
 
     } catch (error) {

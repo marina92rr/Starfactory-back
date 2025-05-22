@@ -1,5 +1,6 @@
-
-const {Schema, model} = require('mongoose');
+const mongoose = require('mongoose')
+const {Schema, model} = mongoose;
+const AutoIncrement = require('mongoose-sequence')(mongoose);
 
 const ClientSchema = Schema({
     name: {
@@ -30,7 +31,31 @@ const ClientSchema = Schema({
         type: Boolean,
         required: false
     },
+
+     //id User
+    idUser: {
+        type: Schema.Types.ObjectId,        //_id del User
+        ref: 'User',                      //Nombre modelo al que va unido
+        require: true
+    },
+     //id Productos
+    idProducts: {
+        type: Schema.Types.ObjectId,        //_id del Product
+        ref: 'Product',                      //Nombre modelo al que va unido
+        require: true
+    },
+     //Unión con id Etiquetas
+    idLabels: {
+        type: Schema.Types.ObjectId,        //_id del Label
+        ref: 'Label',                      //Nombre modelo al que va unido
+        require: true
+    },
     
 })
+
+// Le indicamos que genere un campo numérico llamado 'idClient'
+ClientSchema.plugin(AutoIncrement, {
+  inc_field: 'idClient',
+  collection: 'countsClientId' });
 
 module.exports = model('Client', ClientSchema);
