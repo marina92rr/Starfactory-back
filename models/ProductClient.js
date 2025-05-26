@@ -4,28 +4,48 @@
 const mongoose = require('mongoose');
 const { Schema, model } = mongoose;
 const AutoIncrement = require('mongoose-sequence')(mongoose);
-const Client = require("./Client");
 
 
 const ProductClientSchema = Schema({
 
-    idProduct: {
-        
+   idProduct: {
+    type: Schema.Types.ObjectId,
+    ref: 'Product',
+    required: true
+   },
+
+   idClient :{
+    type: Schema.Types.ObjectId,
+    ref: 'Client',
+    required: true
+   },
+
+    paid: {
+        type: Boolean,
     },
 
-    name: {
-        type: String,
+    dateValue: {
+        type: Date,
         require: true
     },
-    color: {
-        type: String,
+
+     paymentDate: {
+        type: Date,
         require: true
+    },
+    paymentMethod: {
+        type: String,
+        
     }
+
 
 });
 
-//LabelSchema.plugin(AutoIncrement, {
-// inc_field: 'idLabel',
-// collection: 'countsLabelId'});
+// Le indicamos que genere un campo numérico llamado 'idClient'
+ProductClientSchema.plugin(AutoIncrement, {
+  inc_field: 'idProductClient',
+  collection: 'countsProductClienttId' 
+});
 
-module.exports = model('Label', LabelSchema);
+
+module.exports = model('ProductClient', ProductClientSchema);

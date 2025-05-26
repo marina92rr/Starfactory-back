@@ -22,9 +22,9 @@ const UserSchema = Schema({
 });
 
 
-//UserSchema.plugin(AutoIncrement, {
-//    inc_field: 'idUser',
-//    Collection: 'countsUserId'});
+UserSchema.plugin(AutoIncrement, {
+    inc_field: 'idUser',
+    Collection: 'countsUserId'});
 
 module.exports = model('User', UserSchema);
 

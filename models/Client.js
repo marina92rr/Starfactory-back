@@ -38,24 +38,33 @@ const ClientSchema = Schema({
         ref: 'User',                      //Nombre modelo al que va unido
         require: true
     },
-     //id Productos
-    idProducts: {
+     //id Productos ARRAY
+    idProducts: [{
         type: Schema.Types.ObjectId,        //_id del Product
         ref: 'Product',                      //Nombre modelo al que va unido
         require: true
-    },
-     //Unión con id Etiquetas
-    idLabels: {
-        type: Schema.Types.ObjectId,        //_id del Label
-        ref: 'Label',                      //Nombre modelo al que va unido
-        require: true
-    },
+    }],
+     //Unión con id Etiquetas ARRAY
+    idLabels: [{
+        type: Number,
+        required: true
+    }],
     
 })
 
 // Le indicamos que genere un campo numérico llamado 'idClient'
 ClientSchema.plugin(AutoIncrement, {
   inc_field: 'idClient',
-  collection: 'countsClientId' });
+  collection: 'countsClientId' 
+});
+
+
+// Virtual para poder hacer .populate('labels')
+ClientSchema.virtual('labels', {
+  ref: 'Label',            // Modelo a popular
+  localField: 'idLabels',  // Array de Numbers en Client
+  foreignField: 'idLabel', // Campo numérico en Label
+  justOne: false
+});
 
 module.exports = model('Client', ClientSchema);

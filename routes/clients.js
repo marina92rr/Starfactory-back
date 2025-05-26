@@ -4,12 +4,16 @@
 const {Router} = require('express'); //Importar ruta
 const {check} = require('express-validator');
 
-const { getClients, createClient, updateClient, deleteClient, getClientByDNI } = require('../constrollers/clients');
+const { getClients, createClient, getClientByDNI, 
+        getlabelsToClient, addLabelToClient, removeLabelToClient,
+        
+ } = require('../constrollers/clients');
 const { validateFields } = require('../middlewares/validate-fields');
 
 //-----Rutas-----
 const router = Router();
 
+//---------CLIENTES---------------
 //Obtener clientes
 router.get( '/', getClients);
 
@@ -29,10 +33,17 @@ router.post(
     ],
      createClient);
 
-//Actualizar cliente
-router.put( '/:dni', updateClient);
+//---------Etiquetas---------------
 
-//eliminar cliente
-router.delete( '/:dni', deleteClient);
+
+//Obtener labels de cliente
+router.get( '/:dni/labels', getlabelsToClient);
+
+
+//añadir label a cliente
+router.post( '/label', addLabelToClient);
+
+//Eliminar label de cliente
+router.delete( '/label', removeLabelToClient)
 
 module.exports = router;
