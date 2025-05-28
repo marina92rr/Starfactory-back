@@ -38,22 +38,39 @@ const getClientByDNI = async(req, res =response) =>{
 }
 
 const createClient = async(req, res = response)  =>{
-    try {
-        const client = new Client(req.body);    //Crear nuevo objeto cliente
-        await client.save();   
-       res.status(400).json({
-        ok:true,
-        msg: 'Cliente Creado con éxito', 
-        client
-    }) 
+   try {
+    const normalizeText = (text) => {
+      return text
+        .normalize("NFD")                     // separa letras de los acentos
+        .replace(/[\u0300-\u036f]/g, "")     // elimina los acentos
+        .toLowerCase();                      // convierte a minúsculas
+    };
 
-    } catch (error) {
-        res.status(500).json({
-            ok:false,
-            msg: 'Hable con el administrador',
-            error:error.message
-        })
-    }
+    const normalizedBody = {
+      ...req.body,
+      name: normalizeText(req.body.name),
+      lastName: normalizeText(req.body.lastName),
+      email: normalizeText(req.body.email),
+      dni: req.body.dni?.toLowerCase(), // normaliza el DNI si es texto
+    };
+
+    const client = new Client(normalizedBody);
+    await client.save();
+
+    res.status(200).json({
+      ok: true,
+      msg: 'Cliente creado con éxito',
+      client,
+    });
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      ok: false,
+      msg: 'Hable con el administrador',
+      error: error.message,
+    });
+  }
 }
 
 const updateClient = async(req, res = response) =>{
