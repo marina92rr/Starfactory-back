@@ -11,16 +11,17 @@ const getProducts = async( req, res = response) =>{
     })
 };
 
-//etiquetas por id cliente
+//Productos por id cliente
 
-//crear etiqueta
+//crear Producto
 const createProduct = async( req, res = response) =>{
     try {
         const product = new Product(req.body);
         await product.save();
         res.status(400).json({
             ok:true,
-            msg: 'Etiqueta creada con éxito', product
+            msg: 'Etiqueta creada con éxito', 
+            product
         })
         
     } catch (error) {
@@ -31,7 +32,7 @@ const createProduct = async( req, res = response) =>{
         })
     }
 }
-//Editar etiqueta
+//Editar Producto
 const updateProduct = async(req,res = response) =>{
 
     const {idProduct} = req.params;

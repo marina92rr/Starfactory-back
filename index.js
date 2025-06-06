@@ -36,3 +36,4 @@ app.use('/clients', require('./routes/clients'));
 app.use('/labels', require('./routes/labels'));
 app.use('/products', require('./routes/products'));
 app.use('/productsClient', require('./routes/productsClient'));
+app.use('/store', require('./routes/store'));
