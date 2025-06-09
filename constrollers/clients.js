@@ -106,10 +106,7 @@ const updateClient = async(req, res = response) =>{
             msg: 'Hable con el administrador'
         })
     }
-    res.json({
-        ok:true,
-        msg: 'Actualizar Cliente'
-    })
+   
 }
 
 const deleteClient = async(req, res = response) =>{

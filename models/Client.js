@@ -45,10 +45,10 @@ const ClientSchema = Schema({
         require: true
     }],
      //Unión con id Etiquetas ARRAY
-    idLabels: [{
-        type: Number,
-        required: true
-    }],
+   idLabels: [{
+    type: Number,
+    required: true
+    }]
     
 })
 

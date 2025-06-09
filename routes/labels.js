@@ -1,5 +1,5 @@
 const { Router } = require("express");
-const { getLabels, createLabel, updateLabel, deleteLabel, createLabelAndAssign } = require("../constrollers/labels");
+const { getLabels, createLabel, updateLabelClient, deleteLabel, createLabelAndAssign } = require("../constrollers/labels");
 const { check } = require("express-validator");
 
 
@@ -18,7 +18,7 @@ router.post('/', createLabel)
 router.post( '/create-and-assign', createLabelAndAssign);
 
 //Cambiar etiqueta
-router.put('/:id', updateLabel);
+router.put('/:id', updateLabelClient);
 
 //Eliminar etiqueta
 router.delete('/:id', deleteLabel);

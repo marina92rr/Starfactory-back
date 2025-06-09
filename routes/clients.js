@@ -6,6 +6,7 @@ const {check} = require('express-validator');
 
 const { getClients, createClient, getClientByDNI, 
         getlabelsToClient, addLabelToClient, removeLabelToClient,
+        updateClient,
         
  } = require('../constrollers/clients');
 const { validateFields } = require('../middlewares/validate-fields');
@@ -20,6 +21,10 @@ router.get( '/', getClients);
 //Obtener 1 Cliente
 router.get('/:dni', getClientByDNI);
 
+//Actualizar cliente
+router.put('/:dni', updateClient );
+
+
 //Crear nuevo cliente
 router.post( 
     '/',
@@ -32,6 +37,8 @@ router.post(
         validateFields
     ],
      createClient);
+
+
 
 //---------Etiquetas---------------
 

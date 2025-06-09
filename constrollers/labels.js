@@ -2,6 +2,8 @@ const { response } = require("express");
 const Label = require('../models/Label');
 const Client = require("../models/Client");
 
+
+
 //getEtiquetas
 const getLabels = async( req, res = response) =>{
     const labels = await Label.find();
@@ -54,36 +56,37 @@ const createLabelAndAssign = async( req, res = response) =>{
   }
 }
 //Editar etiqueta
-const updateLabel = async(req,res = response) =>{
+const updateLabelClient = async (req, res = response) => {
 
-    const {idLabel} = req.params;
-    try {
-        const label = await Label.findById(idLabel);
-        if(!label){
-            return res.status(404).json({
-                ok:false,
-                msg: 'La etiqueta no existe'
-            })
-        }
-        
-        const newLabel = {
-            ...req.body
-        }
+  const { idLabels, dni } = req.body;
 
-        const labelUpdate = await Label.findByIdAndUpdate({idLabel}, newLabel, {new:true});
+  try {
+    const client = await Client.findOneAndUpdate(
+      { dni },                    // ← buscamos por DNI
+      { $set: {idLabels } },       // ← solo actualizamos etiquetas
+      { new: true }
+    );
 
-        req.json({
-            ok:true,
-            label: labelUpdate
-        })
-
-    } catch (error) {
-         res.status(500).json({
-            ok:false,
-            msg: 'Hable con el administrador'
-        })
+    if (!client) {
+      return res.status(404).json({
+        ok: false,
+        msg: 'Cliente no encontrado por DNI',
+      });
     }
-}
+
+    return res.json({
+      ok: true,
+      client,
+    });
+
+  } catch (error) {
+    console.error('Error al actualizar cliente', error);
+    return res.status(500).json({
+      ok: false,
+      msg: 'Error del servidor',
+    });
+  }
+};
 
 //Eliminar etiqueta
 const deleteLabel = async(req, res = response) =>{
@@ -114,6 +117,6 @@ module.exports = {
     getLabels,
     createLabel,
     createLabelAndAssign,
-    updateLabel,
+    updateLabelClient,
     deleteLabel
 }
