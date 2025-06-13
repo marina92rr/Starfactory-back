@@ -3,7 +3,7 @@ const Client = require('../models/Client');
 
 //Acciones con Label + Product
 const Label = require('../models/Label');
-const Product = require('../models/Product');
+const Product = require('../models/store/Product');
 
 const getClients = async(req, res = response) =>{
     const clients = await Client.find();

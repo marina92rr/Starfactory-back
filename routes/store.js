@@ -4,8 +4,6 @@ const { getCategories, createCategory } = require('../constrollers/store');
 const { check } = require('express-validator');
 
 
-
-
 const router = Router();
 
 //Obtener Categorias

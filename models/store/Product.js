@@ -15,9 +15,17 @@ const ProductSchema = Schema({
     },
     price: {
         type: Number,
-        required: true
-    }
+        require: true
+    },
+      //id Category
+      idCategory: {
+        type: Schema.Types.ObjectId,        //_id del User
+        ref: 'Category',                      //Nombre modelo al que va unido
+        require: true
+    },
 });
+
+
 
 ProductSchema.plugin(AutoIncrement, {
  inc_field: 'idProduct',

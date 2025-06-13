@@ -1,6 +1,6 @@
 const { Router } = require("express");
 const { check } = require("express-validator");
-const { getProducts, createProduct, updateProduct, deleteProduct } = require("../constrollers/products");
+const { getProducts, createProduct, updateProduct, deleteProduct, productsByIdCategory } = require("../constrollers/products");
 
 
 
@@ -8,8 +8,11 @@ const { getProducts, createProduct, updateProduct, deleteProduct } = require("..
 //-----Rutas-----
 const router = Router();
 
-//Obtener Etiquetas
+//Obtener Productos
 router.get('/', getProducts);
+
+//Obtener todos los Productos por idCategoria
+router.get('/:idCategory', productsByIdCategory)
 
 
 //Añadir etiqueta
@@ -21,11 +24,11 @@ router.post(
     ], 
     createProduct);
 
-//Cambiar etiqueta
-router.put('/:id', updateProduct);
+//Cambiar Producto
+router.put('/:idProduct', updateProduct);
 
-//Eliminar etiqueta
-router.delete('/:id', deleteProduct);
+//Eliminar Producto
+router.delete('/:idProduct', deleteProduct);
 
 module.exports= router;
 
