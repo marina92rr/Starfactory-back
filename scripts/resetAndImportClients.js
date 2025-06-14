@@ -75,7 +75,7 @@ async function importClientsWithLabels(labelMap, rows) {
     const clientData = {
       name: row['Nombre'] || '',
       lastName: row['Apellidos'] || '',
-      dni,
+      dni: row['ID'] || '', // Usar columna ID del Excel como DNI
       email: row['Email'] || '',
       mainPhone: normalizePhone(row['Teléfono']),
       optionalPhone: normalizePhone(row['Teléfono alternativo']),
