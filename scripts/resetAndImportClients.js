@@ -1,6 +1,8 @@
+
 const mongoose = require('mongoose');
 const XLSX = require('xlsx');
 const path = require('path');
+const { Types } = require('mongoose');
 const Client = require('../models/Client');
 const Label = require('../models/Label');
 
@@ -10,12 +12,16 @@ mongoose.connect(MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 }).then(() => console.log('✅ Conectado a MongoDB Atlas'))
-  .catch(err => console.error('❌ Error al conectar a MongoDB', err));
+  .catch(err => {
+    console.error('❌ Error al conectar a MongoDB', err);
+    process.exit(1);
+  });
 
 const filePath = path.join(__dirname, '../star-factory-sevilla_exportacion_clientes_Timp.xls.xlsx');
 
 const workbook = XLSX.readFile(filePath);
-const worksheet = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
+const excelData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
+console.log(`📄 Registros leídos del Excel: ${excelData.length}`);
 
 function normalizePhone(phone) {
   if (!phone) return '';
@@ -43,22 +49,25 @@ async function extractUniqueLabels(rows) {
 }
 
 async function createLabels(uniqueLabels) {
-  const labelMap = {}; // name -> idLabel
+  const labelMap = {}; // name → idLabel
 
   for (const name of uniqueLabels) {
     const newLabel = new Label({ name, color: generateRandomColor() });
     await newLabel.save();
     labelMap[name] = newLabel.idLabel;
-    console.log(`➕ Etiqueta creada: ${name}`);
+    console.log(`➕ Etiqueta creada: ${name} (idLabel: ${newLabel.idLabel})`);
   }
 
   return labelMap;
 }
 
-async function importClientsWithLabels(labelMap) {
-  for (const row of worksheet) {
+async function importClientsWithLabels(labelMap, rows) {
+  for (const row of rows) {
     const dni = row['DNI'];
-    if (!dni) continue;
+    if (!dni) {
+      console.warn('⚠️ Cliente sin DNI, omitido');
+      continue;
+    }
 
     const etiquetas = (row['Etiquetas'] || '').split(',').map(e => e.trim()).filter(Boolean);
     const idLabels = etiquetas.map(e => labelMap[e]).filter(Boolean);
@@ -71,31 +80,35 @@ async function importClientsWithLabels(labelMap) {
       mainPhone: normalizePhone(row['Teléfono']),
       optionalPhone: normalizePhone(row['Teléfono alternativo']),
       isTeacher: false,
-      idUser: null,
+      idUser: new Types.ObjectId(), // cumple con el modelo como ObjectId generado
       idProducts: [],
       idLabels
     };
 
-    const client = new Client(clientData);
-    await client.save();
-    console.log(`✅ Cliente insertado: ${dni}`);
+    try {
+      const client = new Client(clientData);
+      await client.save();
+      console.log(`✅ Cliente insertado: ${client.name} ${client.lastName} (DNI: ${dni})`);
+    } catch (err) {
+      console.error(`❌ Error insertando cliente ${dni}: ${err.message}`);
+    }
   }
 }
 
 async function run() {
   try {
-    console.log('🧹 Borrando colecciones...');
+    console.log('🧹 Eliminando colecciones...');
     await Client.deleteMany({});
     await Label.deleteMany({});
-    console.log('✅ Datos anteriores eliminados.');
+    console.log('✅ Colecciones limpiadas.');
 
-    const uniqueLabels = await extractUniqueLabels(worksheet);
+    const uniqueLabels = await extractUniqueLabels(excelData);
     const labelMap = await createLabels(uniqueLabels);
-    await importClientsWithLabels(labelMap);
+    await importClientsWithLabels(labelMap, excelData);
 
-    console.log('🎉 Proceso completo.');
+    console.log('🎉 Importación finalizada correctamente.');
   } catch (err) {
-    console.error('❌ Error:', err);
+    console.error('❌ Error general:', err);
   } finally {
     mongoose.disconnect();
   }
