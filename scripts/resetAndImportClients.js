@@ -37,8 +37,8 @@ async function extractUniqueLabels(rows) {
   const labelSet = new Set();
 
   for (const row of rows) {
-    if (row['Etiquetas']) {
-      const etiquetas = row['Etiquetas'].split(',').map(e => e.trim());
+    if (row['etiquetas']) {
+      const etiquetas = row['etiquetas'].split(',').map(e => e.trim());
       etiquetas.forEach(e => {
         if (e) labelSet.add(e);
       });
@@ -63,13 +63,13 @@ async function createLabels(uniqueLabels) {
 
 async function importClientsWithLabels(labelMap, rows) {
   for (const row of rows) {
-    const dni = row['DNI'];
+    const dni = row['ID'];
     if (!dni) {
       console.warn('⚠️ Cliente sin DNI, omitido');
       continue;
     }
 
-    const etiquetas = (row['Etiquetas'] || '').split(',').map(e => e.trim()).filter(Boolean);
+    const etiquetas = (row['etiquetas'] || '').split(',').map(e => e.trim()).filter(Boolean);
     const idLabels = etiquetas.map(e => labelMap[e]).filter(Boolean);
 
     const clientData = {
