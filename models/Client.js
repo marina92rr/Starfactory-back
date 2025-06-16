@@ -5,11 +5,9 @@ const AutoIncrement = require('mongoose-sequence')(mongoose);
 const ClientSchema = Schema({
     name: {
         type: String,
-        required: true
     },
     lastName: {
         type: String,
-        required: true
     },
     dni: {
         type: String,
@@ -18,36 +16,30 @@ const ClientSchema = Schema({
     },
     email: {
         type: String,
-        required: true
     },
     mainPhone: {
         type: String,
-        required: true
     },
     optionalPhone: {
         type: String,
     },
     isTeacher: {
         type: Boolean,
-        required: false
     },
 
      //id User
     idUser: {
         type: Schema.Types.ObjectId,        //_id del User
         ref: 'User',                      //Nombre modelo al que va unido
-        require: true
     },
      //id Productos ARRAY
     idProducts: [{
         type: Schema.Types.ObjectId,        //_id del Product
         ref: 'Product',                      //Nombre modelo al que va unido
-        require: true
     }],
      //Unión con id Etiquetas ARRAY
    idLabels: [{
     type: Number,
-    required: true
     }]
     
 })

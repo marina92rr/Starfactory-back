@@ -29,11 +29,7 @@ router.put('/:dni', updateClient );
 router.post( 
     '/',
     [
-        check('name', 'El nombre del alumno es obligatorio').not().notEmpty(),
-        check('lastName', 'El Apellido del alumno es obligatorio').not().notEmpty(),
         check('dni', 'El dni del alumno es obligatorio').not().notEmpty(),
-        check('email', 'El email del alumno es obligatorio').isEmail(),
-        check('mainPhone', 'El teléfono del alumno es obligatorio').not().notEmpty(),
         validateFields
     ],
      createClient);
