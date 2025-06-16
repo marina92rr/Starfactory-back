@@ -6,7 +6,7 @@ const Label = require('../models/Label');
 const Product = require('../models/store/Product');
 
 const getClients = async(req, res = response) =>{
-    const clients = await Client.find();
+    const clients = await Client.find().limit(30);
     res.json({
         ok:true,
         clients
