@@ -6,12 +6,24 @@ const Label = require('../models/Label');
 const Product = require('../models/store/Product');
 
 const getClients = async(req, res = response) =>{
-    const clients = await Client.find().limit(30);
+    const clients = await Client.find();
+
     res.json({
         ok:true,
         clients
     })
 }
+
+const getLimitClients = async(req, res = response) =>{
+    const clients = await Client.find().limit(30);
+
+    res.json({
+        ok:true,
+        clients
+    })
+}
+
+
 
 const getClientByDNI = async(req, res =response) =>{
 
@@ -299,6 +311,7 @@ module.exports = {
     createClient,
     updateClient,
     deleteClient,
+    getLimitClients,
 
     //*LABELS
     getlabelsToClient,
