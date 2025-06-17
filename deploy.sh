@@ -2,9 +2,6 @@
 
 echo "========== INICIANDO DEPLOY BACK =========="
 
-# Moverse al directorio del backend (ajusta la ruta si es necesario)
-cd /ruta/a/tu/backend || { echo "❌ Error: No se pudo acceder al directorio del backend"; exit 1; }
-
 # Actualización del repositorio
 echo "📥 Ejecutando git fetch..."
 git fetch
