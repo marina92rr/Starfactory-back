@@ -67,17 +67,24 @@ const updateProduct = async(req,res = response) =>{
 
 //Eliminar Producto
 const deleteProduct = async(req, res = response) =>{
+
     const {idProduct} = req.params;
     try {
-        const product = await Product.findById({idProduct});
+        const product = await Product.findOneAndDelete({idProduct});
         if( !product){
             return res.status(404).json({
                 ok: false,
                 msg: 'El producto no existe'
             })
         }
+        
+    // Opcional: loggear que se eliminó
+        console.log(`Producto eliminado: ${product.name}`);
 
-         res.json({ok:true});
+         res.json({
+             ok:true,
+             msg: 'Producto eliminado'
+         });
 
     } catch (error) {
         

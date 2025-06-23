@@ -1,19 +1,19 @@
 
 const { Router} = require('express');
-const { getCategories, createCategory } = require('../constrollers/store');
+const { getCategories, createCategory } = require('../constrollers/category');
 const { check } = require('express-validator');
 
 
 const router = Router();
 
 //Obtener Categorias
-router.get('/category', getCategories);
+router.get('/', getCategories);
 
 //Obtener Producto de categoria
 
 
 //Añadir Categoria
-router.post('/category',
+router.post('/',
     [
         check('description', 'El nombre de la Catería es obligatoria')
     ],

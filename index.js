@@ -12,7 +12,7 @@ const { request } = require('http');
 const app = express();
 
 app.use(cors({
- // origin: ['http://localhost:5173'],
+  //origin: ['http://localhost:5173'],
   origin: ['https://www.starfactorysevillaadmin.com'],
   credentials: true,
   optionsSuccessStatus: 200
@@ -32,9 +32,17 @@ app.use( express.static('public'));
 //Lectura y parsero del body
 app.use( express.json());
 
-//Ruta
+//----------Rutas----------
+//clientes
 app.use('/clients', require('./routes/clients'));
 app.use('/labels', require('./routes/labels'));
-app.use('/products', require('./routes/products'));
 app.use('/productsClient', require('./routes/productsClient'));
-app.use('/store', require('./routes/store'));
+
+//Store
+app.use('/category', require('./routes/category'));
+app.use('/products', require('./routes/products'));
+
+//Rates
+app.use('/rates', require('./routes/rates'));
+app.use('/quotas', require('./routes/quotas'));
+
