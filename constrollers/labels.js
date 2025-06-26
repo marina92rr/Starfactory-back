@@ -27,24 +27,57 @@ const createLabel = async(req,res = response) =>{
     res.status(500).json({ message: 'Error al crear etiqueta' });
   }
 }
+
+const updateLabel = async(req, res = response) =>{
+     const {idLabel} = req.params;
+     try {
+         const label = await Label.findOne({idLabel});
+         if(!label){
+             //Si no existe el ID
+             console.log('Etiqueta no encontrada');
+             return res.status(404).json({
+                 ok:false,
+                 msg: 'Etiqueta no existe 0'
+             })
+         }
+         const newLabel ={
+             ...req.body
+         }
+            //Actualiza la categoria
+         const labelUpdate = await Label.findOneAndUpdate({idLabel}, newLabel, {new: true});
+         //JSON Update
+         res.json({
+             ok:true,
+             label: labelUpdate
+         })
+         
+     } catch (error) {
+         //Si no pasa por try
+         res.status(500).json({
+             ok:false,
+             msg: 'Hable con el administrador'
+         })
+     }
+    
+ }
 //crear etiqueta y añadir a cliente
 const createLabelAndAssign = async( req, res = response) =>{
      try {
-    const { name, description, color, dni } = req.body;
+    const { name, description, color, idClient } = req.body;
 
     // 1. Crear la etiqueta (idLabel se autogenera por el plugin)
     const newLabel = new Label({ name, description, color });
     await newLabel.save();
 
-    // 2. Buscar cliente por DNI
-    const client = await Client.findOne({ dni });
+    // 2. Buscar cliente por ID
+    const client = await Client.findOne({ idClient });
     if (!client) {
       return res.status(404).json({ message: 'Cliente no encontrado' });
     }
 
     // 3. Añadir el idLabel al array idLabels sin duplicados
     await Client.findOneAndUpdate(
-      { dni },
+      { idClient },
       { $addToSet: { idLabels: newLabel.idLabel } },
       { new: true }
     );
@@ -55,14 +88,18 @@ const createLabelAndAssign = async( req, res = response) =>{
     res.status(500).json({ message: 'Error en el servidor' });
   }
 }
-//Editar etiqueta
+//Actualizar etiquetas del cliente
 const updateLabelClient = async (req, res = response) => {
-
-  const { idLabels, dni } = req.body;
+  console.log('PUT recibido:', req.params.id);
+  console.log('Actualizando etiquetas del cliente');
+  console.log(req.body);
+  const { idClient, idLabels  } = req.body;
 
   try {
+  console.log('Actualizando etiquetas del cliente');
+  console.log(req.body);
     const client = await Client.findOneAndUpdate(
-      { dni },                    // ← buscamos por DNI
+      { idClient },                    // ← buscamos por ID
       { $set: {idLabels } },       // ← solo actualizamos etiquetas
       { new: true }
     );
@@ -70,10 +107,9 @@ const updateLabelClient = async (req, res = response) => {
     if (!client) {
       return res.status(404).json({
         ok: false,
-        msg: 'Cliente no encontrado por DNI',
+        msg: 'Cliente no encontrado por ID',
       });
     }
-
     return res.json({
       ok: true,
       client,
@@ -113,9 +149,12 @@ const deleteLabel = async(req, res = response) =>{
 }
 
 
+
+
 module.exports = {
     getLabels,
     createLabel,
+    updateLabel,
     createLabelAndAssign,
     updateLabelClient,
     deleteLabel

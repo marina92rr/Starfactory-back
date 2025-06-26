@@ -4,10 +4,11 @@
 const {Router} = require('express'); //Importar ruta
 const {check} = require('express-validator');
 
-const { getClients, createClient, getClientByDNI, 
+const { getClients, createClient, 
         getlabelsToClient, addLabelToClient, removeLabelToClient,
         updateClient,
         getLimitClients,
+        getClientByID,
         
  } = require('../constrollers/clients');
 const { validateFields } = require('../middlewares/validate-fields');
@@ -23,20 +24,14 @@ router.get( '/', getClients);
 router.get( '/limit', getLimitClients);
 
 //Obtener 1 Cliente
-router.get('/:dni', getClientByDNI);
+router.get('/:idClient', getClientByID);
 
 //Actualizar cliente
-router.put('/:dni', updateClient );
+router.put('/:idClient', updateClient );
 
 
 //Crear nuevo cliente
-router.post( 
-    '/',
-    [
-        check('dni', 'El dni del alumno es obligatorio').not().notEmpty(),
-        validateFields
-    ],
-     createClient);
+router.post('/', createClient);
 
 
 
@@ -44,7 +39,7 @@ router.post(
 
 
 //Obtener labels de cliente
-router.get( '/:dni/labels', getlabelsToClient);
+router.get( '/:idClient/labels', getlabelsToClient);
 
 
 //añadir label a cliente

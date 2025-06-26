@@ -38,7 +38,61 @@ const createCategory =async( req, res = response) =>{
     }
 }
 
-//PRODUCT
+ const updateCategory = async(req, res = response) =>{
+     const {idCategory} = req.params;
+     try {
+         const category = await Category.findOne({idCategory});
+         if(!category){
+             //Si no existe el ID
+             return res.status(404).json({
+                 ok:false,
+                 msg: 'Categoría no existe'
+             })
+         }
+         const newCategory ={
+             ...req.body
+         }
+            //Actualiza la categoria
+         const categoryUpdate = await Category.findOneAndUpdate({idCategory}, newCategory, {new: true});
+         //JSON Update
+         res.json({
+             ok:true,
+             category: categoryUpdate
+         })
+         
+     } catch (error) {
+         //Si no pasa por try
+         res.status(500).json({
+             ok:false,
+             msg: 'Hable con el administrador'
+         })
+     }
+    
+ }
+
+//Eliminar categoria
+const deleteCategory = async(req, res = response) =>{
+    const {idCategory} = req.params;
+    try {
+        const category = await Category.findOneAndDelete({idCategory});
+        if( !category){
+            return res.status(404).json({
+                ok: false,
+                msg: 'La categoría no existe'
+            })
+        }
+        res.json({
+             ok:true,
+             msg: 'Categoría eliminada'
+         });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok:false,
+            msg: 'Hable con el administrador'
+        })
+    }
+}
 
 
 
@@ -46,5 +100,7 @@ const createCategory =async( req, res = response) =>{
 
 module.exports = {
     getCategories,
-    createCategory
+    createCategory,
+    updateCategory,
+    deleteCategory
 }

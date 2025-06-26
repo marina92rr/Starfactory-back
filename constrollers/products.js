@@ -67,7 +67,6 @@ const updateProduct = async(req,res = response) =>{
 
 //Eliminar Producto
 const deleteProduct = async(req, res = response) =>{
-
     const {idProduct} = req.params;
     try {
         const product = await Product.findOneAndDelete({idProduct});
@@ -77,17 +76,11 @@ const deleteProduct = async(req, res = response) =>{
                 msg: 'El producto no existe'
             })
         }
-        
-    // Opcional: loggear que se eliminó
-        console.log(`Producto eliminado: ${product.name}`);
-
-         res.json({
+        res.json({
              ok:true,
              msg: 'Producto eliminado'
          });
-
     } catch (error) {
-        
         console.log(error);
         res.status(500).json({
             ok:false,

@@ -24,7 +24,7 @@ router.post(
     ], 
     createProduct);
 
-//Cambiar Producto
+//Actualizar Producto
 router.put('/:idProduct', updateProduct);
 
 //Eliminar Producto

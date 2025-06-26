@@ -8,21 +8,21 @@ const { getQuotas, quotaByIdRate, createQuota, updateQuota, deleteQuota } = requ
 //-----Rutas-----
 const router = Router();
 
-//Obtener Productos
+//Obtener cuotas
 router.get('/', getQuotas);
 
 //Obtener todas las cuotas por idfactura
 router.get('/:idRate', quotaByIdRate)
 
 
-//Añadir etiqueta
+//Añadir cuota
 router.post(
     '/', createQuota);
 
-//Cambiar Producto
+//Actualizar cuota
 router.put('/:idQuota', updateQuota);
 
-//Eliminar Producto
+//Eliminar cuota
 router.delete('/:idQuota', deleteQuota);
 
 module.exports= router;

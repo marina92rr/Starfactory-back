@@ -25,15 +25,15 @@ const getLimitClients = async(req, res = response) =>{
 
 
 
-const getClientByDNI = async(req, res =response) =>{
+const getClientByID = async(req, res =response) =>{
 
-    const { dni } = req.params;
+    const { idClient } = req.params;
     try {
-        const client = await Client.findOne({ dni });
+        const client = await Client.findOne({ idClient });
         if (!client) {
           return res.status(404).json({
             ok: false,
-            msg: `Cliente con DNI ${dni} no encontrado.`
+            msg: `Cliente con ID ${idClient} no encontrado.`
           });
         }
         res.json({
@@ -41,7 +41,7 @@ const getClientByDNI = async(req, res =response) =>{
           client
         });
         } catch (error) {
-        console.error('Error al obtener cliente por DNI:', error);
+        console.error('Error al obtener cliente por ID:', error);
         res.status(500).json({
           ok: false,
           msg: 'Hable con el administrador'
@@ -63,7 +63,7 @@ const createClient = async(req, res = response)  =>{
       name: normalizeText(req.body.name),
       lastName: normalizeText(req.body.lastName),
       email: normalizeText(req.body.email),
-      dni: req.body.dni?.toLowerCase(), // normaliza el DNI si es texto
+      idClient: req.body.idClient?.toLowerCase(), // normaliza el ID si es texto
     };
 
     const client = new Client(normalizedBody);
@@ -86,14 +86,12 @@ const createClient = async(req, res = response)  =>{
 }
 
 const updateClient = async(req, res = response) =>{
-
-    const {dni} = req.params;
-    
+    const {idClient} = req.params;
     try {
 
-        const client = await Client.findOne({dni});
+        const client = await Client.findOne({idClient});
         if(!client){
-            //Si no existe el dni
+            //Si no existe el ID
             return res.status(404).json({
                 ok:false,
                 msg: 'Cliente no existe'
@@ -104,7 +102,7 @@ const updateClient = async(req, res = response) =>{
             ...req.body
         }
 
-        const clientUpdate = await Client.findOneAndUpdate({dni}, newClient, {new: true});
+        const clientUpdate = await Client.findOneAndUpdate({idClient}, newClient, {new: true});
         //JSON Update
         res.json({
             ok:true,
@@ -122,9 +120,9 @@ const updateClient = async(req, res = response) =>{
 }
 
 const deleteClient = async(req, res = response) =>{
-    const {dni} = req.params;
+    const {idClient} = req.params;
     try {
-        const client = await Client.findOneAndDelete({dni});
+        const client = await Client.findOneAndDelete({idClient});
         if( !client ){
             return res.status(404).json({
                 ok: false,
@@ -148,10 +146,10 @@ const deleteClient = async(req, res = response) =>{
 
 //Obtener labels de cliente
 const getlabelsToClient = async( req, res= response) =>{
-    const { dni} = req.params;
+    const { idClient} = req.params;
 
     try {
-        const client = await Client.findOne({dni})
+        const client = await Client.findOne({idClient})
         .populate('labels');
 
         if(!client){
@@ -179,7 +177,7 @@ const getlabelsToClient = async( req, res= response) =>{
 //Añadir Label a cliente
 const addLabelToClient = async(req, res = response) =>{
      try {
-    let { dni, idLabel, idLabels } = req.body;
+    let { idClient, idLabel, idLabels } = req.body;
 
     // soporta las dos formas: un solo idLabel o un array idLabels
     let labelsToAdd = [];
@@ -192,7 +190,7 @@ const addLabelToClient = async(req, res = response) =>{
     }
 
     // 1) Buscamos el cliente
-    const client = await Client.findOne({ dni });
+    const client = await Client.findOne({ idClient });
     if (!client) return res.status(404).json({ message: 'Cliente no encontrado' });
 
     // 2) Revisa que cada etiqueta exista
@@ -203,7 +201,7 @@ const addLabelToClient = async(req, res = response) =>{
 
     // 3) Añade los números al array, evitando duplicados
     const updated = await Client.findOneAndUpdate(
-      { dni },
+      { idClient },
       { $addToSet: { idLabels: { $each: labelsToAdd } } },
       { new: true }
     );
@@ -215,10 +213,10 @@ const addLabelToClient = async(req, res = response) =>{
   }
 }
 
-//Eliminar etiquetas de Cliente por DNI
+//Eliminar etiquetas de Cliente por ID
 const removeLabelToClient = async(req, res= response) =>{
     try {
-    const { dni, idLabel } = req.params;
+    const { idClient, idLabel } = req.params;
     const labelNum = Number(idLabel);
 
     // 0) Validar que idLabel sea un número válido
@@ -230,7 +228,7 @@ const removeLabelToClient = async(req, res= response) =>{
     }
 
     // 1) Buscar cliente
-    const client = await Client.findOne({ dni });
+    const client = await Client.findOne({ idClient });
     if (!client) {
       return res.status(404).json({ 
         ok: false, 
@@ -249,7 +247,7 @@ const removeLabelToClient = async(req, res= response) =>{
 
     // 3) Eliminar el número de etiqueta del array (sin $each)
     const updatedClient = await Client.findOneAndUpdate(
-      { dni },
+      { idClient },
       { $pull: { idLabels: labelNum } },
       { new: true }
     ).populate('labels');  // virtual que mapea idLabels → documentos Label
@@ -274,10 +272,10 @@ const removeLabelToClient = async(req, res= response) =>{
 //---------------PRODUCT-------------------------
 const addProductToClient = async(req, res = response) =>{
     try {
-    const { dni, idProduct } = req.body;
+    const { idClient, idProduct } = req.body;
 
     // 1. Comprueba que exista el cliente
-    const client = await Client.findOne({dni});
+    const client = await Client.findOne({idClient});
     if (!client) {
       return res.status(404).json({ message: 'Cliente no encontrado' });
     }
@@ -290,7 +288,7 @@ const addProductToClient = async(req, res = response) =>{
 
     // 3. Evita duplicados con $addToSet (solo añade si no existe)
     const updatedClient = await Client.findOneAndUpdate(
-      {dni},
+      {idClient},
       { $addToSet: { idProducts: idProduct } },
       { new: true }                           // para devolver el documento actualizado
     ).populate('idProducts');                   // opcional: para devolver los datos de las etiquetas
@@ -307,7 +305,7 @@ const addProductToClient = async(req, res = response) =>{
 
 module.exports = {
     getClients,
-    getClientByDNI,
+    getClientByID,
     createClient,
     updateClient,
     deleteClient,

@@ -1,6 +1,6 @@
 
 const { Router} = require('express');
-const { getCategories, createCategory } = require('../constrollers/category');
+const { getCategories, createCategory, updateCategory, deleteCategory } = require('../constrollers/category');
 const { check } = require('express-validator');
 
 
@@ -19,10 +19,12 @@ router.post('/',
     ],
     createCategory
 )
-//Añadir Producto a Categoria
 
+//Actualizar categoria
+router.put('/:idCategory', updateCategory );
 
-//Eliminar Categoría
+//Eliminar Categoria
+router.delete('/:idCategory', deleteCategory);
 
 //Eliminar Producto de categoria
 

@@ -1,17 +1,21 @@
 
 const { Router} = require('express');
-const { getRates, createRate } = require('../constrollers/rates');
+const { getRates, createRate, updateRate, deleteRate } = require('../constrollers/rates');
 
 
 const router = Router();
 
-//Obtener Factura
+//Obtener Tarifa
 router.get('/', getRates);
 
 
-//Añadir factura
+//Añadir Tarifa
 router.post('/', createRate);
 
-//Eliminar factura
+//Actualizar Tarifa
+router.put('/:idRate', updateRate);
+
+//Eliminar Tarifa
+router.delete('/:idRate', deleteRate);
 
 module.exports = router;

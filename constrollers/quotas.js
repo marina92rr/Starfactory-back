@@ -46,10 +46,7 @@ const updateQuota = async(req,res = response) =>{
             })
         }
 
-        const newQuota = {
-            ...req.body
-        }
-
+        const newQuota = { ...req.body}
         const quotaUpdate = await Quota.findByIdAndUpdate({idQuota}, newQuota, {new:true});
 
         req.json({
@@ -69,7 +66,7 @@ const updateQuota = async(req,res = response) =>{
 const deleteQuota= async(req, res = response) =>{
     const {idQuota} = req.params;
     try {
-        const quota = await Quota.findById({idQuota});
+        const quota = await Quota.findOneAndDelete({idQuota});
         if( !quota){
             return res.status(404).json({
                 ok: false,
@@ -77,7 +74,10 @@ const deleteQuota= async(req, res = response) =>{
             })
         }
 
-         res.json({ok:true});
+         res.json({
+            ok:true,
+            msg: 'Cuota eliminada'
+});
 
     } catch (error) {
         
