@@ -10,18 +10,18 @@ const QuotaSchema = Schema({
         type: String,
         require: true
     },
-   numSession: {
-  type: Number,
-  required: false, // o false, según tu lógica
-},
+    numSession: {
+        type: Number,
+        require: false, // o false, según tu lógica
+    },
     numPeriods: {
         type: Number,
-        required: false, // o false, según tu lógica
+        require: false, // o false, según tu lógica
 
     },
     period:{
         type: String,
-        required: false, // o false, según tu lógica
+        require: false, // o false, según tu lógica
 
     },
     price: {

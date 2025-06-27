@@ -16,10 +16,14 @@ const getQuotas = async( req, res = response) =>{
 
 //crear cuota
 const createQuota = async( req, res = response) =>{
+    console.log('Datos recibidos en backend:', req.body);
+
     try {
         const quota = new Quota(req.body);
+
+
         await quota.save();
-        res.status(400).json({
+        res.status(200).json({
             ok:true,
             msg: 'Cuota creada con éxito', 
             quota

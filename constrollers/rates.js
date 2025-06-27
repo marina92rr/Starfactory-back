@@ -19,7 +19,7 @@ const createRate =async( req, res = response) =>{
     try {
         const rate = new Rate(req.body);
         await rate.save();
-        res.status(400).json({
+        res.status(200).json({
             ok:true,
             msg: 'Tarifa creada con éxito',
             rate

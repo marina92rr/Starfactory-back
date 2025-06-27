@@ -18,7 +18,7 @@ const getLabels = async( req, res = response) =>{
 //Crear etiqueta
 const createLabel = async(req,res = response) =>{
      try {
-    const { name, description, color } = req.body;
+    const { name, color } = req.body;
     const newLabel = new Label({ name, description, color });
     await newLabel.save();
     res.status(201).json(newLabel);
@@ -63,10 +63,10 @@ const updateLabel = async(req, res = response) =>{
 //crear etiqueta y añadir a cliente
 const createLabelAndAssign = async( req, res = response) =>{
      try {
-    const { name, description, color, idClient } = req.body;
+    const { name, color, idClient } = req.body;
 
     // 1. Crear la etiqueta (idLabel se autogenera por el plugin)
-    const newLabel = new Label({ name, description, color });
+    const newLabel = new Label({ name, color });
     await newLabel.save();
 
     // 2. Buscar cliente por ID
@@ -85,7 +85,7 @@ const createLabelAndAssign = async( req, res = response) =>{
     res.status(201).json({ label: newLabel });
   } catch (error) {
     console.error('Error creando etiqueta y asignándola al cliente:', error);
-    res.status(500).json({ message: 'Error en el servidor' });
+    res.status(500).json({ message: 'Error en el servidor AQUI' });
   }
 }
 //Actualizar etiquetas del cliente

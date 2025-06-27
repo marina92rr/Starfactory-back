@@ -55,15 +55,15 @@ const createClient = async(req, res = response)  =>{
       return text
         .normalize("NFD")                     // separa letras de los acentos
         .replace(/[\u0300-\u036f]/g, "")     // elimina los acentos
-        .toLowerCase();                      // convierte a minúsculas
+        .toUpperCase();                      // convierte a Minusculas
     };
 
     const normalizedBody = {
       ...req.body,
       name: normalizeText(req.body.name),
       lastName: normalizeText(req.body.lastName),
-      email: normalizeText(req.body.email),
-      idClient: req.body.idClient?.toLowerCase(), // normaliza el ID si es texto
+      email: req.body.email,
+      idClient: req.body.idClient, // normaliza el ID si es texto
     };
 
     const client = new Client(normalizedBody);

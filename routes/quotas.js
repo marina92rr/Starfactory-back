@@ -16,8 +16,7 @@ router.get('/:idRate', quotaByIdRate)
 
 
 //Añadir cuota
-router.post(
-    '/', createQuota);
+router.post('/', createQuota);
 
 //Actualizar cuota
 router.put('/:idQuota', updateQuota);

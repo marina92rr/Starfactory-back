@@ -19,9 +19,9 @@ const createProduct = async( req, res = response) =>{
     try {
         const product = new Product(req.body);
         await product.save();
-        res.status(400).json({
+        res.status(200).json({
             ok:true,
-            msg: 'Producto creada con éxito', 
+            msg: 'Producto creado con éxito', 
             product
         })
         
@@ -35,7 +35,6 @@ const createProduct = async( req, res = response) =>{
 }
 //Editar Producto
 const updateProduct = async(req,res = response) =>{
-
     const {idProduct} = req.params;
     try {
         const product = await Product.findById(idProduct);
@@ -49,9 +48,7 @@ const updateProduct = async(req,res = response) =>{
         const newProduct = {
             ...req.body
         }
-
         const productUpdate = await Product.findByIdAndUpdate({idProduct}, newProduct, {new:true});
-
         req.json({
             ok:true,
             product: productUpdate
