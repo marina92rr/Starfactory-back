@@ -1,6 +1,5 @@
 const { response } = require("express");
 const Product = require('../models/store/Product');
-const res = require("express/lib/response");
 
 
 //getProduct
@@ -28,7 +27,7 @@ const createProduct = async( req, res = response) =>{
     } catch (error) {
         res.status(500).json({
             ok:false,
-            msg: 'Hable con el administrador',
+            msg: 'Error al crear producto',
             error: error.message
         })
     }
@@ -37,7 +36,8 @@ const createProduct = async( req, res = response) =>{
 const updateProduct = async(req,res = response) =>{
     const {idProduct} = req.params;
     try {
-        const product = await Product.findById(idProduct);
+        // Buscamos por el campo 'idProduct', no por el '_id' de MongoDB
+        const product = await Product.findOne({idProduct});
         if(!product){
             return res.status(404).json({
                 ok:false,
@@ -48,8 +48,10 @@ const updateProduct = async(req,res = response) =>{
         const newProduct = {
             ...req.body
         }
-        const productUpdate = await Product.findByIdAndUpdate({idProduct}, newProduct, {new:true});
-        req.json({
+        // Usamos findOneAndUpdate para buscar por un campo que no es el _id
+        const productUpdate = await Product.findOneAndUpdate({idProduct}, newProduct, {new:true});
+        // Corregido de req.json a res.json
+        res.json({
             ok:true,
             product: productUpdate
         })
@@ -57,7 +59,7 @@ const updateProduct = async(req,res = response) =>{
     } catch (error) {
          res.status(500).json({
             ok:false,
-            msg: 'Hable con el administrador'
+            msg: 'Fallo al actualizar producto'
         })
     }
 }
@@ -67,21 +69,17 @@ const deleteProduct = async(req, res = response) =>{
     const {idProduct} = req.params;
     try {
         const product = await Product.findOneAndDelete({idProduct});
-        if( !product){
-            return res.status(404).json({
-                ok: false,
-                msg: 'El producto no existe'
-            })
-        }
+      
         res.json({
              ok:true,
-             msg: 'Producto eliminado'
+             msg: 'Producto eliminado',
+             product
          });
     } catch (error) {
         console.log(error);
         res.status(500).json({
             ok:false,
-            msg: 'Hable con el administrador'
+            msg: 'Error al borrar un producto'
         })
     }
 }
@@ -102,7 +100,7 @@ const productsByIdCategory = async(req, res = response) =>{
         console.log(error);
         res.status(500).json({
             ok:false,
-            msg: 'Hable con el administrador'
+            msg: 'Fallo al obtener productos por categoria'
         })
         
     }
