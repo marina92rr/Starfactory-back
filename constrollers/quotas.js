@@ -51,9 +51,7 @@ const updateQuota = async(req, res = response) =>{
         }
         const newQuota = { ...req.body}
         // Usamos findOneAndUpdate para buscar por un campo que no es el _id
-        const quotaUpdate = await Quota.findOneAndUpdate({idQuota}, newQuota, {
-            new: true
-        });
+        const quotaUpdate = await Quota.findOneAndUpdate({idQuota}, newQuota, {new: true});
 
         res.json({ // Corregido de req.json a res.json
             ok:true,

@@ -45,9 +45,7 @@ const updateProduct = async(req,res = response) =>{
             })
         }
 
-        const newProduct = {
-            ...req.body
-        }
+        const newProduct = {...req.body}
         // Usamos findOneAndUpdate para buscar por un campo que no es el _id
         const productUpdate = await Product.findOneAndUpdate({idProduct}, newProduct, {new:true});
         // Corregido de req.json a res.json
