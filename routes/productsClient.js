@@ -6,24 +6,18 @@ const { getProductsClient, createProductClient, updateProductClient, deleteProdu
 //-----Rutas-----
 const router = Router();
 
-//Obtener Etiquetas
-router.get('/', getProductsClient);
+//Obtener Productos cliente
+router.get('/:idClient', getProductsClient);
 
 
 //Añadir etiqueta
-router.post(
-    '/',
-    [
-        check('name', 'El nombre del Producto es obligatorio').not().notEmpty(),
-        check('price', 'El precio del Producto es obligatorio').not().notEmpty(),
-    ], 
-    createProductClient);
+router.post( '/:idClient', createProductClient);
 
 //Cambiar etiqueta
-router.put('/:id', updateProductClient);
+router.put('/:idProductClient', updateProductClient);
 
 //Eliminar etiqueta
-router.delete('/:id', deleteProductClient);
+router.delete('/:idProductClient', deleteProductClient);
 
 module.exports= router;
 

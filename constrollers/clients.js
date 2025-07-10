@@ -142,6 +142,33 @@ const deleteClient = async(req, res = response) =>{
     }
 }
 
+//-------------BAJA--------------------
+const getClientsCancellationsFuture = async(req, res =response) =>{
+    const { date } = req.params; // Espera una fecha en formato YYYY-MM-DD
+    try {
+        const clients = await Client.find({
+            dateCancellation: { $gte: new Date(date) }
+        });
+
+        if (clients.length === 0) {
+            return res.status(404).json({
+                ok: false,
+                msg: 'No se encontraron clientes con cancelaciones futuras.'
+            });
+        }
+        res.json({
+            ok: true,
+            clients
+        });
+    } catch (error) {
+        console.error('Error al obtener clientes con cancelaciones futuras:', error);
+        res.status(500).json({
+            ok: false,
+            msg: 'Hable con el administrador'
+    });
+  }
+}
+
 //---------------LABEL-------------------------
 
 //Obtener labels de cliente
@@ -310,6 +337,8 @@ module.exports = {
     updateClient,
     deleteClient,
     getLimitClients,
+    //Baja
+    getClientsCancellationsFuture,
 
     //*LABELS
     getlabelsToClient,

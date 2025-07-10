@@ -9,6 +9,7 @@ const { getClients, createClient,
         updateClient,
         getLimitClients,
         getClientByID,
+        getClientsCancellationsFuture,
         
  } = require('../constrollers/clients');
 const { validateFields } = require('../middlewares/validate-fields');
@@ -29,13 +30,13 @@ router.get('/:idClient', getClientByID);
 //Actualizar cliente
 router.put('/:idClient', updateClient );
 
-
 //Crear nuevo cliente
 router.post('/', createClient);
 
+//---------------Baja---------------
+router.get('/cancellations', getClientsCancellationsFuture);
 
-
-//---------Etiquetas---------------
+//---------------Etiquetas---------------
 
 
 //Obtener labels de cliente
