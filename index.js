@@ -46,3 +46,6 @@ app.use('/products', require('./routes/products'));
 app.use('/rates', require('./routes/rates'));
 app.use('/quotas', require('./routes/quotas'));
 
+//Sales
+app.use('/sales', require('./routes/productsClient'));
+

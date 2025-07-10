@@ -8,31 +8,35 @@ const QuotaSchema = Schema({
 
     name: {
         type: String,
-        require: true
+        required: true
+    },
+    description:{
+        type:String,
+        required: false
     },
     numSession: {
         type: Number,
-        require: false, // o false, según tu lógica
+        required: false, // o false, según tu lógica
     },
     numPeriods: {
         type: Number,
-        require: false, // o false, según tu lógica
+        required: false, // o false, según tu lógica
 
     },
     period:{
         type: String,
-        require: false, // o false, según tu lógica
+        required: false, // o false, según tu lógica
 
     },
     price: {
         type: Number,
-        require: true
+        required: true
     },
       //id Category
     idRate: {
         type: Schema.Types.ObjectId,        //_id tarifa
         ref: 'Rate',                      //Nombre modelo al que va unido
-        require: true
+        required: true
     },
 });
 

@@ -8,20 +8,20 @@ const ProductSchema = Schema({
 
     name: {
         type: String,
-        require: true
+        required: true
     },
     description: {
         type: String,
     },
     price: {
         type: Number,
-        require: true
+        required: true
     },
       //id Category
       idCategory: {
         type: Schema.Types.ObjectId,        //_id del User
         ref: 'Category',                      //Nombre modelo al que va unido
-        require: true
+        required: true
     },
 });
 
