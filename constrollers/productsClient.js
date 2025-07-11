@@ -17,63 +17,47 @@ const getProductsClient = async( req, res = response) =>{
 };
 
 //etiquetas por id cliente
-const createProductClient = async (req, res = response) => {
-  const { idClient } = req.params;
-  const { idProduct, idQuota, ...rest } = req.body;
-
+const createProductClient = async (req, res) => {
   try {
-    if (idProduct && idQuota) {
-      return res.status(400).json({
-        ok: false,
-        msg: 'Solo puedes enviar un producto o una cuota, no ambos.'
-      });
+    const {
+      idClient,
+      products,
+      paymentMethod,
+      paid
+    } = req.body;
+
+    if (!Array.isArray(products) || products.length === 0) {
+      return res.status(400).json({ msg: 'Debe enviar un array de productos o cuotas.' });
     }
 
-    if (!idProduct && !idQuota) {
-      return res.status(400).json({
-        ok: false,
-        msg: 'Debes enviar al menos un producto o una cuota.'
-      });
-    }
+    const now = new Date();
 
-    let finalIdProduct = null;
-    let finalIdQuota = null;
+    const newProductClients = await Promise.all(
+      products.map(async (product) => {
+        const newEntry = new ProductClient({
+          idClient,
+          idProduct: product.idProduct !== false ? product.idProduct : null,
+          idQuota: product.idQuota !== false ? product.idQuota : null,
+          name: product.name,
+          price: product.price,
+          discount: product.discount ?? 0,
+          paymentMethod: paymentMethod.toLowerCase(),
+          paid,
+          buyDate: now,
+          paymentDate: paid ? now : null
+        });
 
-    if (idProduct) {
-      const product = await Product.findById(idProduct);
-      if (!product) return res.status(404).json({ msg: 'Producto no encontrado' });
-      finalIdProduct = product.idProduct;
-    }
+        return await newEntry.save();
+      })
+    );
 
-    if (idQuota) {
-      const cuota = await Quota.findById(idQuota);
-      if (!cuota) return res.status(404).json({ msg: 'Cuota no encontrada' });
-      finalIdQuota = cuota.idQuota;
-    }
-
-    const productClient = new ProductClient({
-      idClient: parseInt(idClient),
-      idProduct: finalIdProduct,
-      idQuota: finalIdQuota,
-      ...rest // Aquí se inyectan name, price, discount, paymentDate, etc.
-    });
-
-    await productClient.save();
-
-    res.status(201).json({
-      ok: true,
-      msg: 'Venta registrada con éxito',
-      productClient
-    });
-
+    res.status(201).json(newProductClients);
   } catch (error) {
-    res.status(500).json({
-      ok: false,
-      msg: 'Error al registrar la venta',
-      error: error.message
-    });
+    console.error('❌ Error al crear productosCliente:', error);
+    res.status(500).json({ msg: 'Error al crear registros de venta.', error: error.message });
   }
 };
+
 const updateProductClient = async (req, res = response) => {
   const { idProductClient } = req.params;
   const { idProduct, idQuota, ...rest } = req.body;

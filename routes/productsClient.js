@@ -11,7 +11,7 @@ router.get('/:idClient', getProductsClient);
 
 
 //Añadir etiqueta
-router.post( '/:idClient', createProductClient);
+router.post( '/', createProductClient);
 
 //Cambiar etiqueta
 router.put('/:idProductClient', updateProductClient);
