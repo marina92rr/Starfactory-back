@@ -6,17 +6,35 @@ const Quota = require("../models/rates/Quota");
 
 
 
-//getEtiquetas
+//rescatar productos de cliente
 const getProductsClient = async( req, res = response) =>{
-    const {idClient} = req.params;
-    const productsClient = await ProductClient.find({ idClient: parseInt(idClient) });
+  try {
+    const { idClient } = req.params;  //recoger idClient de la URL
+
+    if (!idClient) {
+      return res.status(400).json({
+        ok: false,
+        msg: 'Debe proporcionar un idClient en la URL',
+      });
+    }
+
+    const productsClient = await ProductClient.find({ idClient: Number(idClient) });
+
     res.json({
-        ok:true,
-        productsClient
-    })
+      ok: true,
+      productsClient
+    });
+
+  } catch (error) {
+    console.error('❌ Error al obtener productos del cliente:', error);
+    res.status(500).json({
+      ok: false,
+      msg: 'Error al obtener los productos del cliente',
+    });
+  }
 };
 
-//etiquetas por id cliente
+//crear producto de cliente
 const createProductClient = async (req, res) => {
   try {
     const {
@@ -29,9 +47,7 @@ const createProductClient = async (req, res) => {
     if (!Array.isArray(products) || products.length === 0) {
       return res.status(400).json({ msg: 'Debe enviar un array de productos o cuotas.' });
     }
-
     const now = new Date();
-
     const newProductClients = await Promise.all(
       products.map(async (product) => {
         const newEntry = new ProductClient({
@@ -57,7 +73,7 @@ const createProductClient = async (req, res) => {
     res.status(500).json({ msg: 'Error al crear registros de venta.', error: error.message });
   }
 };
-
+//Cambiar producto de cliente
 const updateProductClient = async (req, res = response) => {
   const { idProductClient } = req.params;
   const { idProduct, idQuota, ...rest } = req.body;
@@ -122,6 +138,7 @@ const updateProductClient = async (req, res = response) => {
   }
 };
 
+//eliminar productos de cliente
 const deleteProductClient = async (req, res = response) => {
   const { idProductClient } = req.params;
 
