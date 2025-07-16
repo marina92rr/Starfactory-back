@@ -9,8 +9,10 @@ const { getClients, createClient,
         updateClient,
         getLimitClients,
         getClientByID,
-        getClientsCancellationsFuture,
-        
+        toggleClientStatusCancellation,
+        programClientCancellation,
+        cancelScheduledCancellation,
+        getClientsWithScheduledCancellation
  } = require('../constrollers/clients');
 const { validateFields } = require('../middlewares/validate-fields');
 
@@ -34,7 +36,18 @@ router.put('/:idClient', updateClient );
 router.post('/', createClient);
 
 //---------------Baja---------------
-router.get('/cancellations', getClientsCancellationsFuture);
+
+//obtener baja de clientes programada
+router.get('/cancel', getClientsWithScheduledCancellation);
+
+//Dar de baja a un cliente
+router.patch('/cancel/:idClient', toggleClientStatusCancellation);
+//Programar baja
+router.patch('/programcancel/:idClient', programClientCancellation);
+//Cancelar baja programada
+router.patch('/cancelScheduled/:idClient', cancelScheduledCancellation);
+
+
 
 //---------------Etiquetas---------------
 

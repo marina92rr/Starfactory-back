@@ -25,9 +25,11 @@ const ClientSchema = Schema({
     },
    dateCancellation: {
         type: Date,
+        default: null, //Fecha de cancelación por defecto es null (activo)
     },
     dateRegistration: {
         type: Date,
+        default: Date.now, //Fecha de registro por defecto es la fecha actual
     },
 
      //id User
@@ -62,25 +64,6 @@ ClientSchema.virtual('labels', {
   justOne: false
 });
 
-// Comprueba si el cliente está activo
-function isActive(dateCancellation) {
-  return dateCancellation === null;
-}
 
-// Comprueba si el cliente está de baja (fecha de cancelación pasada o igual a hoy)
-function isCancelled(dateCancellation) {
-  if (!dateCancellation) return false;
-  const today = new Date().setHours(0,0,0,0);
-  const cancelDate = new Date(dateCancellation).setHours(0,0,0,0);
-  return cancelDate <= today;
-}
-
-// Comprueba si la baja está programada (fecha de cancelación en el futuro)
-function isScheduledCancellation(dateCancellation) {
-  if (!dateCancellation) return false;
-  const today = new Date().setHours(0,0,0,0);
-  const cancelDate = new Date(dateCancellation).setHours(0,0,0,0);
-  return cancelDate > today;
-}
 
 module.exports = model('Client', ClientSchema);

@@ -4,6 +4,8 @@ const Client = require('../models/Client');
 //Acciones con Label + Product
 const Label = require('../models/Label');
 const Product = require('../models/store/Product');
+//Utils Baja
+const { isActive, isCancelled, isScheduledCancellation } = require('../utils/clientsStatus');
 
 const getClients = async(req, res = response) =>{
     const clients = await Client.find();
@@ -21,9 +23,7 @@ const getLimitClients = async(req, res = response) =>{
         ok:true,
         clients
     })
-}
-
-
+};
 
 const getClientByID = async(req, res =response) =>{
 
@@ -140,33 +140,6 @@ const deleteClient = async(req, res = response) =>{
             msg: 'Hable con el administrador'
         })
     }
-}
-
-//-------------BAJA--------------------
-const getClientsCancellationsFuture = async(req, res =response) =>{
-    const { date } = req.params; // Espera una fecha en formato YYYY-MM-DD
-    try {
-        const clients = await Client.find({
-            dateCancellation: { $gte: new Date(date) }
-        });
-
-        if (clients.length === 0) {
-            return res.status(404).json({
-                ok: false,
-                msg: 'No se encontraron clientes con cancelaciones futuras.'
-            });
-        }
-        res.json({
-            ok: true,
-            clients
-        });
-    } catch (error) {
-        console.error('Error al obtener clientes con cancelaciones futuras:', error);
-        res.status(500).json({
-            ok: false,
-            msg: 'Hable con el administrador'
-    });
-  }
 }
 
 //---------------LABEL-------------------------
@@ -328,7 +301,106 @@ const addProductToClient = async(req, res = response) =>{
     console.error(err);
     res.status(500).json({ error: 'Error en el servidor' });
   }
-}
+};
+
+//--------------BAJA/ALTA CLIENTE-------------------
+// Cambia el estado de un cliente entre activo y cancelado
+const toggleClientStatusCancellation = async (req, res) => {
+  const { idClient } = req.params;
+
+  try {
+    const client = await Client.findOne({ idClient: parseInt(idClient) }); // 👈 importante hacer parseInt
+
+    if (!client) return res.status(404).json({ msg: 'Cliente no encontrado' });
+
+    if (isCancelled(client.dateCancellation)) {
+      client.dateCancellation = null;
+      await client.save();
+      return res.json({ msg: 'Cliente reactivado', client });
+    } else {
+      client.dateCancellation = new Date();
+      await client.save();
+      return res.json({ msg: 'Cliente dado de baja', client });
+    }
+  } catch (error) {
+    console.error('Error al cambiar estado del cliente:', error);
+    res.status(500).json({ msg: 'Error interno al cambiar estado del cliente' });
+  }
+};
+//Programa la baja de un cliente para una fecha futura
+const programClientCancellation = async (req, res) => {
+  const { idClient } = req.params;
+  const { cancelDate } = req.body;
+
+ try {
+    const client = await Client.findOne({ idClient: parseInt(idClient) });
+    if (!client) return res.status(404).json({ msg: 'Cliente no encontrado' });
+
+    // Validar la fecha de entrada
+    const futureDate = new Date(cancelDate);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    if (futureDate <= today) {
+      return res.status(400).json({ msg: 'La fecha debe ser futura' });
+    }
+
+    // ✅ Evitar sobrescribir si ya tiene una baja programada
+    if (isScheduledCancellation(client.dateCancellation)) {
+      return res.status(400).json({
+        msg: `El cliente ya tiene una baja programada para el ${new Date(client.dateCancellation).toLocaleDateString()}`,
+      });
+    }
+
+    client.dateCancellation = futureDate;
+    await client.save();
+
+    return res.json({ msg: 'Baja programada correctamente', client });
+  } catch (error) {
+    console.error('Error al programar baja:', error);
+    res.status(500).json({ msg: 'Error al programar baja del cliente' });
+  }
+};
+
+// Cancela la baja programada (pasa dateCancellation a null solo si es futura)
+const cancelScheduledCancellation = async (req, res) => {
+  const { idClient } = req.params;
+
+  try {
+    const client = await Client.findOne({ idClient: parseInt(idClient) });
+    if (!client) return res.status(404).json({ msg: 'Cliente no encontrado' });
+
+    if (client.dateCancellation && new Date(client.dateCancellation) > new Date()) {
+      client.dateCancellation = null;
+      await client.save();
+      return res.json({ msg: 'Baja programada cancelada', client });
+    } else {
+      return res.status(400).json({ msg: 'El cliente no tiene una baja programada futura' });
+    }
+  } catch (error) {
+    console.error('Error al cancelar baja programada:', error);
+    res.status(500).json({ msg: 'Error interno al cancelar baja' });
+  }
+};
+
+//Get clients with future cancellations
+const getClientsWithScheduledCancellation = async (req, res) => {
+  try {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const clients = await Client.find({
+      dateCancellation: { $gt: today }, // solo futuras
+    });
+
+    res.json({ clients });
+  } catch (error) {
+    console.error('Error al obtener clientes con baja programada:', error);
+    res.status(500).json({ msg: 'Error interno al obtener clientes' });
+  }
+};
+
+
 
 module.exports = {
     getClients,
@@ -338,7 +410,10 @@ module.exports = {
     deleteClient,
     getLimitClients,
     //Baja
-    getClientsCancellationsFuture,
+    toggleClientStatusCancellation,
+    programClientCancellation,
+    cancelScheduledCancellation, 
+    getClientsWithScheduledCancellation,
 
     //*LABELS
     getlabelsToClient,
