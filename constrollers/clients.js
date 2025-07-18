@@ -144,6 +144,24 @@ const deleteClient = async(req, res = response) =>{
 
 //---------------LABEL-------------------------
 
+//Obtener datos label del cliente
+const getLabelsOfClient = async (req, res) => {
+  const idClient = Number(req.params.idClient);
+console.log('Recibo idClient:', idClient);
+
+const client = await Client.findOne({ idClient });
+console.log('Cliente encontrado:', client);
+
+if (!client) return res.status(404).json({ msg: 'Cliente no encontrado' });
+
+console.log('Consultando etiquetas con:', client.idLabels);
+
+const labels = await Label.find({ idLabel: { $in: client.idLabels } });
+console.log('Etiquetas encontradas:', labels);
+
+res.json(labels);
+};
+
 //Obtener labels de cliente
 const getlabelsToClient = async( req, res= response) =>{
     const { idClient} = req.params;
@@ -265,6 +283,29 @@ const removeLabelToClient = async(req, res= response) =>{
       ok:  false,
       msg: 'Error en el servidor'
     });
+  }
+}
+
+
+//Filtrar clientes por etiquetas
+const getClientsByLabels = async (req, res = response) => {
+   try {
+    const { labelIds } = req.body; // array de numbers
+
+    if (!Array.isArray(labelIds) || labelIds.length === 0) {
+      return res.status(400).json({ msg: 'No labels provided' });
+    }
+
+    // Busca clientes que tengan TODOS los labels seleccionados (en idLabels)
+    // $all busca arrays que contengan TODOS los valores
+    const clients = await Client.find({
+      idLabels: { $all: labelIds }
+    });
+
+    res.json(clients);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: 'Server error filtering clients by labels' });
   }
 }
 
@@ -419,6 +460,8 @@ module.exports = {
     getlabelsToClient,
     addLabelToClient,
     removeLabelToClient,
+    getLabelsOfClient,
+    getClientsByLabels,
 
     //*PRODUCTS
     addProductToClient

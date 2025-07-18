@@ -12,7 +12,9 @@ const { getClients, createClient,
         toggleClientStatusCancellation,
         programClientCancellation,
         cancelScheduledCancellation,
-        getClientsWithScheduledCancellation
+        getClientsWithScheduledCancellation,
+        getLabelsOfClient,
+        getClientsByLabels
  } = require('../constrollers/clients');
 const { validateFields } = require('../middlewares/validate-fields');
 
@@ -38,7 +40,7 @@ router.post('/', createClient);
 //---------------Baja---------------
 
 //obtener baja de clientes programada
-router.get('/cancel', getClientsWithScheduledCancellation);
+router.get('/cancelprogram', getClientsWithScheduledCancellation);
 
 //Dar de baja a un cliente
 router.patch('/cancel/:idClient', toggleClientStatusCancellation);
@@ -52,14 +54,20 @@ router.patch('/cancelScheduled/:idClient', cancelScheduledCancellation);
 //---------------Etiquetas---------------
 
 
-//Obtener labels de cliente
-router.get( '/:idClient/labels', getlabelsToClient);
-
-
 //añadir label a cliente
 router.post( '/label', addLabelToClient);
 
 //Eliminar label de cliente
-router.delete( '/label', removeLabelToClient)
+router.delete( '/label', removeLabelToClient);
+
+//Obtener datos de Label de clientes
+router.get('/:idClient/labels', getLabelsOfClient); 
+
+//Obtener labels de cliente
+router.get( '/:idClient/arraylabels', getlabelsToClient);
+
+//Filtrar clientes por etiquetas
+router.post('/filterlabels', getClientsByLabels);
+
 
 module.exports = router;

@@ -13,7 +13,9 @@ const LabelSchema = Schema({
     color: {
         type: String,
         require: true
-    }
+    },
+    idLabel: {
+        type: Number,}
 
 });
 

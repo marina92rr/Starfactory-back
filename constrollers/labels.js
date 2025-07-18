@@ -149,8 +149,6 @@ const deleteLabel = async(req, res = response) =>{
 }
 
 
-
-
 module.exports = {
     getLabels,
     createLabel,
