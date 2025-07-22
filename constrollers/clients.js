@@ -426,18 +426,22 @@ const cancelScheduledCancellation = async (req, res) => {
 
 //Get clients with future cancellations
 const getClientsWithScheduledCancellation = async (req, res) => {
-  try {
+ try {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
+    console.log('Hoy:', today);
+
     const clients = await Client.find({
-      dateCancellation: { $gt: today }, // solo futuras
+      dateCancellation: { $gt: today },
     });
+
+    console.log('Clientes encontrados:', clients);
 
     res.json({ clients });
   } catch (error) {
     console.error('Error al obtener clientes con baja programada:', error);
-    res.status(500).json({ msg: 'Error interno al obtener clientes' });
+    res.status(500).json({ msg: 'Error interno al obtener clientes', error: error.message });
   }
 };
 

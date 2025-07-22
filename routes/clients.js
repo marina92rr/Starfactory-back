@@ -25,6 +25,9 @@ const router = Router();
 //Obtener clientes
 router.get( '/', getClients);
 
+//obtener baja de clientes programada
+router.get('/cancelScheduled', getClientsWithScheduledCancellation);
+
 //Obtener clientes
 router.get( '/limit', getLimitClients);
 
@@ -39,8 +42,7 @@ router.post('/', createClient);
 
 //---------------Baja---------------
 
-//obtener baja de clientes programada
-router.get('/cancelprogram', getClientsWithScheduledCancellation);
+
 
 //Dar de baja a un cliente
 router.patch('/cancel/:idClient', toggleClientStatusCancellation);
