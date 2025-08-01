@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-const {Schema, model} = mongoose;
+const { Schema, model } = mongoose;
 const AutoIncrement = require('mongoose-sequence')(mongoose);
 
 const ClientSchema = Schema({
@@ -23,7 +23,7 @@ const ClientSchema = Schema({
     optionalPhone: {
         type: String,
     },
-   dateCancellation: {
+    dateCancellation: {
         type: Date,
         default: null, //Fecha de cancelación por defecto es null (activo)
     },
@@ -32,36 +32,36 @@ const ClientSchema = Schema({
         default: Date.now, //Fecha de registro por defecto es la fecha actual
     },
 
-     //id User
+    //id User
     idUser: {
         type: Schema.Types.ObjectId,        //_id del User
         ref: 'User',                      //Nombre modelo al que va unido
     },
-     //id Productos ARRAY
+    //id Productos ARRAY
     idProducts: [{
         type: Schema.Types.ObjectId,        //_id del Product
         ref: 'Product',                      //Nombre modelo al que va unido
     }],
-     //Unión con id Etiquetas ARRAY
-   idLabels: [{
-    type: Number,
+    //Unión con id Etiquetas ARRAY
+    idLabels: [{
+        type: Number,
     }],
-    
+
 })
 
 // Le indicamos que genere un campo numérico llamado 'idClient'
 ClientSchema.plugin(AutoIncrement, {
-  inc_field: 'idClient',
-  collection: 'countsClientId' 
+    inc_field: 'idClient',
+    collection: 'countsClientId'
 });
 
 
 // Virtual para poder hacer .populate('labels')
 ClientSchema.virtual('labels', {
-  ref: 'Label',            // Modelo a popular
-  localField: 'idLabels',  // Array de Numbers en Client
-  foreignField: 'idLabel', // Campo numérico en Label
-  justOne: false
+    ref: 'Label',            // Modelo a popular
+    localField: 'idLabels',  // Array de Numbers en Client
+    foreignField: 'idLabel', // Campo numérico en Label
+    justOne: false
 });
 
 

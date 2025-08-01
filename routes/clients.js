@@ -7,7 +7,7 @@ const {check} = require('express-validator');
 const { getClients, createClient, 
         getlabelsToClient, addLabelToClient, removeLabelToClient,
         updateClient,
-        getLimitClients,
+        getLimitPageClients,
         getClientByID,
         toggleClientStatusCancellation,
         programClientCancellation,
@@ -29,7 +29,7 @@ router.get( '/', getClients);
 router.get('/cancelScheduled', getClientsWithScheduledCancellation);
 
 //Obtener clientes
-router.get( '/limit', getLimitClients);
+router.get( '/limit', getLimitPageClients);
 
 //Obtener 1 Cliente
 router.get('/:idClient', getClientByID);

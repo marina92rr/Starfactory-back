@@ -16,13 +16,27 @@ const getClients = async(req, res = response) =>{
     })
 }
 
-const getLimitClients = async(req, res = response) =>{
-    const clients = await Client.find().limit(30);
+const getLimitPageClients = async(req, res = response) =>{
+    const page = parseInt(req.query.page) || 1;
+  const limit = 30;
+  const skip = (page - 1) * limit;
+
+  try {
+    const [clients, total] = await Promise.all([
+      Client.find().skip(skip).limit(limit),
+      Client.countDocuments()
+    ]);
 
     res.json({
-        ok:true,
-        clients
-    })
+      ok: true,
+      clients,
+      total,
+      page,
+      totalPages: Math.ceil(total / limit)
+    });
+  } catch (error) {
+    res.status(500).json({ ok: false, msg: 'Error al cargar clientes' });
+  }
 };
 
 const getClientByID = async(req, res =response) =>{
@@ -453,7 +467,7 @@ module.exports = {
     createClient,
     updateClient,
     deleteClient,
-    getLimitClients,
+    getLimitPageClients,
     //Baja
     toggleClientStatusCancellation,
     programClientCancellation,
