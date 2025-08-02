@@ -40,6 +40,8 @@ const QuotaSchema = Schema({
     },
 });
 
+// Habilitar que se incluya idQuota en .toJSON()
+QuotaSchema.set('toJSON', { virtuals: true });
 
 //Id incrementado
 QuotaSchema.plugin(AutoIncrement, {

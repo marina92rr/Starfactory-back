@@ -1,13 +1,13 @@
 const { response } = require("express");
 const ProductClient = require('../models/ProductClient');
-const Client = require("../models/Client");
 const Product = require("../models/store/Product");
 const Quota = require("../models/rates/Quota");
+const SuscriptionClient = require("../models/SuscriptionClient");
 
 
 
-//rescatar productos de cliente
-const getProductsClient = async( req, res = response) =>{
+//------------------rescatar productos de cliente------------------
+const getProductsClient = async (req, res = response) => {
   try {
     const { idClient } = req.params;  //recoger idClient de la URL
 
@@ -34,7 +34,7 @@ const getProductsClient = async( req, res = response) =>{
   }
 };
 
-//crear producto de cliente
+//------------------crear producto de cliente------------------
 const createProductClient = async (req, res) => {
   try {
     const {
@@ -48,12 +48,17 @@ const createProductClient = async (req, res) => {
       return res.status(400).json({ msg: 'Debe enviar un array de productos o cuotas.' });
     }
     const now = new Date();
+
     const newProductClients = await Promise.all(
       products.map(async (product) => {
+
+        const idQuota = product.isProduct === false ? product.idProduct : null;
+        const idProduct = product.isProduct === true ? product.idProduct : null;
+
         const newEntry = new ProductClient({
           idClient,
-          idProduct: product.idProduct !== false ? product.idProduct : null,
-          idQuota: product.idQuota !== false ? product.idQuota : null,
+          idProduct: idProduct,
+          idQuota: idQuota,
           name: product.name,
           price: product.price,
           discount: product.discount ?? 0,
@@ -63,17 +68,35 @@ const createProductClient = async (req, res) => {
           paymentDate: paid ? now : null
         });
 
+        // 🔁 Si selfSale está activado y es una cuota, se crea la suscripción
+        if (product.selfSale === true && idQuota !== null) {
+
+          const price = product.price - (parseFloat(product.discount) || 0);
+
+          const newSubscription = new SuscriptionClient({
+            idClient,
+            idQuota: idQuota,
+            startDate: now,
+            price,
+            paymentMethod: paymentMethod.toLowerCase(),
+            active: true
+          });
+
+          await newSubscription.save();
+        }
+
         return await newEntry.save();
       })
     );
 
-    res.status(201).json(newProductClients);
+    res.status(201).json({ msg: 'Productos guardados correctamente', newProductClients });
   } catch (error) {
-    console.error('❌ Error al crear productosCliente:', error);
-    res.status(500).json({ msg: 'Error al crear registros de venta.', error: error.message });
+    console.error(error);
+    res.status(500).json({ msg: 'Error al guardar los productos' });
   }
 };
-//Cambiar producto de cliente
+
+//------------------Cambiar producto de cliente------------------
 const updateProductClient = async (req, res = response) => {
   const { idProductClient } = req.params;
   const { idProduct, idQuota, ...rest } = req.body;
@@ -114,7 +137,7 @@ const updateProductClient = async (req, res = response) => {
       finalIdQuota = cuota.idQuota;
     }
 
-    // Asignar campos actualizados
+    // ------------------Asignar campos actualizados------------------
     Object.assign(venta, {
       idProduct: finalIdProduct,
       idQuota: finalIdQuota,
@@ -138,7 +161,7 @@ const updateProductClient = async (req, res = response) => {
   }
 };
 
-//eliminar productos de cliente
+//------------------eliminar productos de cliente------------------
 const deleteProductClient = async (req, res = response) => {
   const { idProductClient } = req.params;
 
@@ -165,8 +188,8 @@ const deleteProductClient = async (req, res = response) => {
 
 
 module.exports = {
-    getProductsClient,
-    createProductClient,
-    updateProductClient,
-    deleteProductClient
+  getProductsClient,
+  createProductClient,
+  updateProductClient,
+  deleteProductClient
 }
