@@ -49,3 +49,6 @@ app.use('/quotas', require('./routes/quotas'));
 //Sales
 app.use('/productclient', require('./routes/productsClient'));
 
+//Suscripciones quotas
+app.use('/suscriptions', require('./routes/suscriptionClient'));
+
