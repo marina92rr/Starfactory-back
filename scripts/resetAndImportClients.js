@@ -64,10 +64,10 @@ async function createLabels(uniqueLabels) {
 async function importClientsWithLabels(labelMap, rows) {
   for (const row of rows) {
     const dni = row['ID'];
-    if (!dni) {
+    /*if (!dni) {
       console.warn('⚠️ Cliente sin DNI, omitido');
       continue;
-    }
+    }*/
 
     const etiquetas = (row['etiquetas'] || '').split(',').map(e => e.trim()).filter(Boolean);
     const idLabels = etiquetas.map(e => labelMap[e]).filter(Boolean);
