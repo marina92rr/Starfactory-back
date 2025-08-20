@@ -19,8 +19,6 @@ const createQuota = async( req, res = response) =>{
 
     try {
         const quota = new Quota(req.body);
-
-
         await quota.save();
         res.status(200).json({
             ok:true,

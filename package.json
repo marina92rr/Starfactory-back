@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon index.js",
-    "start": "node index.js"
+    "start": "node index.js",
+    "subs:client": "node scripts/generateMonthlySales.js"
   },
   "keywords": [],
   "author": "",
@@ -15,6 +16,7 @@
     "dotenv": "^16.6.1",
     "express": "^5.1.0",
     "express-validator": "^7.2.1",
+    "minimist": "^1.2.8",
     "mongoose": "^8.13.2",
     "mongoose-sequence": "^6.0.1",
     "node-cron": "^4.2.1",

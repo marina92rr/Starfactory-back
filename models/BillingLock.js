@@ -9,6 +9,6 @@ const BillingLockSchema = Schema({
   createdAt: { type: Date, default: Date.now },
 });
 
-BillingLockSchema.index({ key: 1 }, { unique: true });
+//BillingLockSchema.index({ key: 1 }, { unique: true });
 
 module.exports = model('BillingLock', BillingLockSchema)

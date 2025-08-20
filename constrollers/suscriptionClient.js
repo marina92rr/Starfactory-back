@@ -1,4 +1,4 @@
-const  { response} = require('express');
+const { response } = require('express');
 const SuscriptionClient = require("../models/SuscriptionClient");
 const Quota = require('../models/rates/Quota');
 const Client = require('../models/Client');
@@ -35,6 +35,26 @@ const getSuscriptionsByClient = async (req, res) => {
   }
 };
 
+// DELETE /suscriptions/:id
+const deleteSuscriptionProductClient = async (req, res) => {
+  const idSuscriptionClient = Number(req.params.idSuscriptionClient);
+  if (!Number.isInteger(idSuscriptionClient)) {
+    return res.status(400).json({ ok: false, msg: 'idSuscriptionClient inválido' });
+  }
+
+  try {
+    const deleted = await SuscriptionClient.findOneAndDelete({ idSuscriptionClient });
+    if (!deleted) {
+      return res.status(404).json({ ok: false, msg: 'Suscripción no encontrada' });
+    }
+    return res.status(200).json({ ok: true, deletedId: idSuscriptionClient });
+  } catch (err) {
+    console.error('deleteSuscription error:', err);
+    return res.status(500).json({ ok: false, msg: 'Error al eliminar suscripción' });
+  }
+};
+
 module.exports = {
-  getSuscriptionsByClient
+  getSuscriptionsByClient,
+  deleteSuscriptionProductClient
 };

@@ -4,9 +4,9 @@ const mongoose = require('mongoose');
 const SuscriptionClient = require('../models/SuscriptionClient');
 const ProductClient = require('../models/ProductClient');
 const BillingLock = require('../models/BillingLock');
-// (Opcional) const Quota = require('../models/Quota');
+const Quota = require('../models/rates/Quota');
 
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/starfactory';
+const MONGO_URI = process.env.DB_CNN;
 
 function periodOf(date = new Date()) {
   const y = date.getFullYear();
@@ -19,13 +19,21 @@ function buyDate25(date = new Date()) {
 }
 
 async function run() {
-  await mongoose.connect(MONGO_URI);
+  await mongoose.connect(process.env.DB_CNN);
 
   const now = new Date();
   const period = periodOf(now);
   const buyDate = buyDate25(now);
 
   const subs = await SuscriptionClient.find({ active: true });
+
+  // --- Cargar nombres de cuotas en un solo query ---
+ const quotaIds = [...new Set(subs.map(s => s.idQuota).filter(q => q != null))];
+ let quotaNameById = new Map();
+ if (quotaIds.length) {
+   const quotas = await Quota.find({ idQuota: { $in: quotaIds } }, { idQuota: 1, name: 1, _id: 0 });
+   quotaNameById = new Map(quotas.map(q => [q.idQuota, q.name]));
+ }
 
   let created = 0, skipped = 0, errors = 0;
 
@@ -40,15 +48,10 @@ async function run() {
       errors++; console.error(`[LOCK] ${key}:`, e.message); continue;
     }
 
-    // 2) Crear ProductClient (SIN idSuscriptionClient)
-    let name = 'Suscripción mensual';
-    // (Opcional: personalizar con nombre de cuota)
-    // try {
-    //   if (s.idQuota != null) {
-    //     const q = await Quota.findOne({ idQuota: s.idQuota });
-    //     if (q?.name) name = `Suscripción: ${q.name}`;
-    //   }
-    // } catch (_) {}
+    
+   // Nombre basado en la cuota si existe:
+   const quotaName = s.idQuota != null ? quotaNameById.get(s.idQuota) : null;
+   const name = quotaName ? `${quotaName}` : 'Suscripción mensual';
 
     const productDoc = {
       idClient: s.idClient,
