@@ -17,7 +17,7 @@ mongoose.connect(MONGO_URI, {
     process.exit(1);
   });
 
-const filePath = path.join(__dirname, '../star-factory-sevilla_exportacion_clientes_Timp.xls.xlsx');
+const filePath = path.join(__dirname, '../rellenar_filled.xlsx');
 
 const workbook = XLSX.readFile(filePath);
 const excelData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
@@ -78,7 +78,7 @@ async function importClientsWithLabels(labelMap, rows) {
       dni: row['ID'] || new Types.ObjectId(), // Usar columna ID del Excel como DNI
       email: row['email'] || '',
       mainPhone: normalizePhone(row['telefono']),
-      optionalPhone: null,
+      optionalPhone: normalizePhone(row['telefono2']),
       isTeacher: false,
       idUser: new Types.ObjectId(), // cumple con el modelo como ObjectId generado
       idProducts: [],
