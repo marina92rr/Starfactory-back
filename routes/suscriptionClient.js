@@ -1,5 +1,5 @@
 const { Router } = require("express");
-const { getSuscriptionsByClient, deleteSuscriptionProductClient } = require("../constrollers/suscriptionClient");
+const { getSuscriptionsByClient, deleteSuscriptionClient } = require("../constrollers/suscriptionClient");
 
 
 //-----Rutas-----
@@ -16,6 +16,6 @@ router.get('/:idClient', getSuscriptionsByClient);
 //router.put('/:idProductClient', updateProductClient);
 //
 ////Eliminar etiqueta
-router.delete('/:idSuscriptionClient', deleteSuscriptionProductClient);
+router.delete('/:idSuscriptionClient', deleteSuscriptionClient);
 
 module.exports= router;

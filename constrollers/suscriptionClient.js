@@ -35,26 +35,31 @@ const getSuscriptionsByClient = async (req, res) => {
   }
 };
 
-// DELETE /suscriptions/:id
-const deleteSuscriptionProductClient = async (req, res) => {
-  const idSuscriptionClient = Number(req.params.idSuscriptionClient);
-  if (!Number.isInteger(idSuscriptionClient)) {
-    return res.status(400).json({ ok: false, msg: 'idSuscriptionClient inválido' });
-  }
-
-  try {
-    const deleted = await SuscriptionClient.findOneAndDelete({ idSuscriptionClient });
-    if (!deleted) {
-      return res.status(404).json({ ok: false, msg: 'Suscripción no encontrada' });
+// DELETE /suscriptions/:idSuscriptionClient
+const deleteSuscriptionClient = async (req, res = response) => {
+ const { idSuscriptionClient } = req.params;
+    try {
+        const suscription = await SuscriptionClient.findOneAndDelete({ idSuscriptionClient });
+        if (!suscription) {
+            return res.status(404).json({
+                ok: false,
+                msg: 'La suscripción no existe'
+            })
+        }
+        res.json({
+            ok: true,
+            msg: 'Suscripción eliminada'
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok: false,
+            msg: 'Hable con el administrador'
+        })
     }
-    return res.status(200).json({ ok: true, deletedId: idSuscriptionClient });
-  } catch (err) {
-    console.error('deleteSuscription error:', err);
-    return res.status(500).json({ ok: false, msg: 'Error al eliminar suscripción' });
-  }
 };
 
 module.exports = {
   getSuscriptionsByClient,
-  deleteSuscriptionProductClient
+  deleteSuscriptionClient
 };

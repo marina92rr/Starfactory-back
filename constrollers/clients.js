@@ -375,6 +375,7 @@ const toggleClientStatusCancellation = async (req, res) => {
     } else {
       client.dateCancellation = new Date();
       await client.save();
+      //*Eliminar suscripciones con getSuscriptionByClient
       return res.json({ msg: 'Cliente dado de baja', client });
     }
   } catch (error) {

@@ -3,6 +3,7 @@ const ProductClient = require('../models/ProductClient');
 const Product = require("../models/store/Product");
 const Quota = require("../models/rates/Quota");
 const SuscriptionClient = require("../models/SuscriptionClient");
+const SalesClient = require("../models/SalesClient");
 
 
 
@@ -49,6 +50,12 @@ const createProductClient = async (req, res) => {
     }
     const now = new Date();
 
+    const salesClient = new SalesClient({
+        idClient: idClient,
+        sales: []
+    });
+    await salesClient.save();
+
     const newProductClients = await Promise.all(
       products.map(async (product) => {
 
@@ -64,6 +71,7 @@ const createProductClient = async (req, res) => {
           discount: product.discount ?? 0,
           paymentMethod: paymentMethod.toLowerCase(),
           paid,
+          idSalesClient: salesClient.idSalesClient,
           buyDate: now,
           paymentDate: paid ? now : null
         });
@@ -88,6 +96,9 @@ const createProductClient = async (req, res) => {
         return await newEntry.save();
       })
     );
+    const productsClientForSale = await ProductClient.find({ idSalesClient: Number(salesClient.idSalesClient) });
+    salesClient.sales = productsClientForSale;
+    await salesClient.save();
 
     res.status(201).json({ msg: 'Productos guardados correctamente', newProductClients });
   } catch (error) {

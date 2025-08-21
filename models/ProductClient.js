@@ -26,6 +26,11 @@ const ProductClientSchema = Schema({
         required: true
     },
 
+    idSalesClient: {
+        type: Number,
+        required: false
+    },
+
     buyDate: { type: Date, required: false },
     paymentDate: { type: Date, required: false},
 
@@ -39,7 +44,8 @@ const ProductClientSchema = Schema({
     },
     paid: {
         type: Boolean,
-        required: false
+        required: false,
+        default: false
     },
 
 
