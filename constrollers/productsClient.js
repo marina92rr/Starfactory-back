@@ -190,11 +190,9 @@ const updateProductClient = async (req, res = response) => {
       return res.status(404).json({ ok: false, msg: 'Venta no encontrada' });
     }
     // ------------------Asignar campos actualizados------------------
-    Object.assign(venta, {
-      paymentMethod: paymentMethod.toLowerCase(),
-      paid: paid,
-      paymentDate: new Date()
-    });
+    venta.paymentMethod = paymentMethod.toLowerCase();
+    venta.paid = paid;
+    venta.paymentDate = new Date(); // Fecha actual como fecha de pago
 
     await venta.save();
 
