@@ -35,6 +35,43 @@ const getProductsClient = async (req, res = response) => {
   }
 };
 
+
+//------------------rescatar TODOS los products clients por fecha------------------
+const getAllProductsClient = async (req, res = response) => {
+  try {
+    const { date } = req.params;
+
+    if (!date) {
+      return res.status(400).json({
+        ok: false,
+        msg: 'Debe proporcionar una fecha en la URL',
+      });
+    }
+
+    // Suponiendo que recibes la fecha como 'YYYY-MM-DD'
+    const start = new Date(date);
+    start.setHours(0, 0, 0, 0);
+    const end = new Date(date);
+    end.setHours(23, 59, 59, 999);
+
+    const productsClient = await ProductClient.find({
+      buyDate: { $gte: start, $lte: end }
+    });
+
+    res.json({
+      ok: true,
+      productsClient
+    });
+
+  } catch (error) {
+    console.error('❌ Error al obtener las ventas por fecha:', error);
+    res.status(500).json({
+      ok: false,
+      msg: 'Error al obtener las ventas por fecha',
+    });
+  }
+};
+
 //------------------ productos PAGADOS de cliente ------------------
 const getProductsClientPaid = async (req, res = response) => {
   try {
@@ -228,6 +265,7 @@ const deleteProductClient = async (req, res = response) => {
 
 module.exports = {
   getProductsClient,
+  getAllProductsClient,
   getProductsClientPaid,
   getProductsClientUnpaid,
   createProductClient,

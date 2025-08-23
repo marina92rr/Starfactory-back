@@ -1,5 +1,5 @@
 const { Router } = require("express");
-const { getProductsClient, createProductClient, updateProductClient, deleteProductClient, getProductsClientUnpaid, getProductsClientPaid } = require("../constrollers/productsClient");
+const { getProductsClient, createProductClient, updateProductClient, deleteProductClient, getProductsClientUnpaid, getProductsClientPaid, getAllProductsClient } = require("../constrollers/productsClient");
 
 
 //-----Rutas-----
@@ -7,6 +7,9 @@ const router = Router();
 
 //Obtener Productos cliente
 router.get('/:idClient', getProductsClient);
+
+//Obtener todos los Productos cliente por fecha
+router.get('/date/:date', getAllProductsClient);
 
 //Obtener productos PAGADOS cliente
 router.get('/paid/:idClient', getProductsClientPaid);
