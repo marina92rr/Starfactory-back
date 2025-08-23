@@ -69,7 +69,7 @@ async function importClientsWithLabels(labelMap, rows) {
       continue;
     }*/
 
-    const etiquetas = (row['etiquetas'] || '').split(',').map(e => e.trim()).filter(Boolean);
+    const etiquetas = (row['Etiquetas'] || '').split(',').map(e => e.trim()).filter(Boolean);
     const idLabels = etiquetas.map(e => labelMap[e]).filter(Boolean);
 
     const clientData = {
