@@ -1,5 +1,5 @@
 const { Router } = require("express");
-const { getSuscriptionsByClient, deleteSuscriptionClient } = require("../constrollers/suscriptionClient");
+const { getSuscriptionsByClient, deleteSuscriptionClient, updateSuscriptionClient } = require("../constrollers/suscriptionClient");
 
 
 //-----Rutas-----
@@ -12,9 +12,8 @@ router.get('/:idClient', getSuscriptionsByClient);
 //Añadir etiqueta
 //router.post( '/', createProductClient);
 //
-////Cambiar etiqueta
-//router.put('/:idProductClient', updateProductClient);
-//
+//Actualizar Tarifa
+router.put('/:idSuscriptionClient', updateSuscriptionClient);
 ////Eliminar etiqueta
 router.delete('/:idSuscriptionClient', deleteSuscriptionClient);
 

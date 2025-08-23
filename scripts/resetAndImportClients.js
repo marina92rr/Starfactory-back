@@ -73,13 +73,13 @@ async function importClientsWithLabels(labelMap, rows) {
     const idLabels = etiquetas.map(e => labelMap[e]).filter(Boolean);
 
     const clientData = {
-      name: row['nombre'] || '',
-      lastName: row['apellidos'] || '',
-      dni: row['id'] || new Types.ObjectId(), // Usar columna ID del Excel como DNI
-      email: row['email'] || '',
+      name: row['Nombre'] || '',
+      lastName: row['Apellidos'] || '',
+      dni: row['ID'] || new Types.ObjectId(), // Usar columna ID del Excel como DNI
+      email: row['Email'] || '',
       mainPhone: normalizePhone(row['telefono']),
       optionalPhone: normalizePhone(row['telefono2']),
-      isTeacher: false,
+      whatsappPhone: normalizePhone(row['Telefono Whatsapp']),
       idUser: new Types.ObjectId(), // cumple con el modelo como ObjectId generado
       idProducts: [],
       idLabels

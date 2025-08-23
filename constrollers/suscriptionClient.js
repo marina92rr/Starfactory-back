@@ -35,6 +35,35 @@ const getSuscriptionsByClient = async (req, res) => {
   }
 };
 
+//Actualizar SuscriptionClient
+const updateSuscriptionClient = async (req, res = response) => {
+    const { idSuscriptionClient } = req.params;
+    try {
+        const suscriptionClient = await SuscriptionClient.findOne({ idSuscriptionClient });
+        if (!suscriptionClient) {
+            //Si no existe el rate
+            return res.status(404).json({
+                ok: false,
+                msg: 'suscripción no existe'
+            })
+        }
+        const newSuscriptionClient = { ...req.body }
+        //Actualiza la categoria
+        const suscriptionClientUpdate = await SuscriptionClient.findOneAndUpdate({ idSuscriptionClient }, newSuscriptionClient, { new: true });
+        //JSON Update
+        res.json({
+            ok: true,
+            suscriptionClient: suscriptionClientUpdate
+        })
+    } catch (error) {
+        //Si no pasa por try
+        res.status(500).json({
+            ok: false,
+            msg: 'Hable con el administrador'
+        })
+    }
+}
+
 // DELETE /suscriptions/:idSuscriptionClient
 const deleteSuscriptionClient = async (req, res = response) => {
  const { idSuscriptionClient } = req.params;
@@ -59,7 +88,10 @@ const deleteSuscriptionClient = async (req, res = response) => {
     }
 };
 
+
+
 module.exports = {
   getSuscriptionsByClient,
+  updateSuscriptionClient,
   deleteSuscriptionClient
 };

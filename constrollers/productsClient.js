@@ -7,7 +7,7 @@ const SalesClient = require("../models/SalesClient");
 
 
 
-//------------------rescatar productos de cliente------------------
+//------------------rescatar TODOS los productos de cliente------------------
 const getProductsClient = async (req, res = response) => {
   try {
     const { idClient } = req.params;  //recoger idClient de la URL
@@ -35,6 +35,42 @@ const getProductsClient = async (req, res = response) => {
   }
 };
 
+//------------------ productos PAGADOS de cliente ------------------
+const getProductsClientPaid = async (req, res = response) => {
+  try {
+    const { idClient } = req.params;
+    if (!idClient) {
+      return res.status(400).json({ ok: false, msg: 'Debe proporcionar un idClient en la URL' });
+    }
+
+    // PAGADOS
+    const productsClientPaid = await ProductClient.find({ idClient: Number(idClient), paid: true });
+    return res.json({ ok: true, productsClientPaid });   // 👈 clave EXACTA
+
+  } catch (error) {
+    console.error('❌ Error al obtener productos pagados del cliente:', error);
+    return res.status(500).json({ ok: false, msg: 'Error al obtener los productos pagados del cliente' });
+  }
+};
+
+//------------------ productos NO PAGADOS de cliente ------------------
+const getProductsClientUnpaid = async (req, res = response) => {
+  try {
+    const { idClient } = req.params;
+    if (!idClient) {
+      return res.status(400).json({ ok: false, msg: 'Debe proporcionar un idClient en la URL' });
+    }
+    // NO PAGADOS
+    const productsClientUnpaid = await ProductClient.find({ idClient: Number(idClient), paid: false });
+    return res.json({ ok: true, productsClientUnpaid }); // 👈 clave EXACTA
+
+
+  } catch (error) {
+    console.error('❌ Error al obtener productos no pagados del cliente:', error);
+    return res.status(500).json({ ok: false, msg: 'Error al obtener los productos no pagados del cliente' });
+  }
+};
+
 //------------------crear producto de cliente------------------
 const createProductClient = async (req, res) => {
   try {
@@ -51,8 +87,8 @@ const createProductClient = async (req, res) => {
     const now = new Date();
 
     const salesClient = new SalesClient({
-        idClient: idClient,
-        sales: []
+      idClient: idClient,
+      sales: []
     });
     await salesClient.save();
 
@@ -79,13 +115,12 @@ const createProductClient = async (req, res) => {
         // 🔁 Si selfSale está activado y es una cuota, se crea la suscripción
         if (product.selfSale === true && idQuota !== null) {
 
-          const price = product.price - (parseFloat(product.discount) || 0);
-
           const newSubscription = new SuscriptionClient({
             idClient,
             idQuota: idQuota,
             startDate: now,
-            price,
+            price: product.price ?? 0,
+            discount: product.discount ?? 0,
             paymentMethod: paymentMethod.toLowerCase(),
             active: true
           });
@@ -174,32 +209,27 @@ const updateProductClient = async (req, res = response) => {
 
 //------------------eliminar productos de cliente------------------
 const deleteProductClient = async (req, res = response) => {
-  const { idProductClient } = req.params;
+    const { idProductClient } = req.params;
 
-  try {
-    const venta = await ProductClient.findByIdAndDelete(idProductClient);
-    if (!venta) {
-      return res.status(404).json({ ok: false, msg: 'Venta no encontrada' });
-    }
+   try {
+    
+    // Borra SOLO si está impagado
+    const removeProductClient = await ProductClient.deleteOne({ idProductClient });
+    
+    return res.json({ ok:true, msg:'Venta impagada eliminada', removeProductClient });
+   
 
-    res.json({
-      ok: true,
-      msg: 'Venta eliminada correctamente',
-      venta
-    });
-
-  } catch (error) {
-    res.status(500).json({
-      ok: false,
-      msg: 'Error al eliminar la venta',
-      error: error.message
-    });
+  } catch (e) {
+    console.error('Error eliminando impago:', e);
+    res.status(500).json({ ok:false, msg:'Error interno eliminando impago' });
   }
 };
 
 
 module.exports = {
   getProductsClient,
+  getProductsClientPaid,
+  getProductsClientUnpaid,
   createProductClient,
   updateProductClient,
   deleteProductClient

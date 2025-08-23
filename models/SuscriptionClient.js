@@ -21,9 +21,11 @@ const SuscriptionClientSchema = Schema({
 
     price: { type: Number, required: true },
 
+    discount: { type: Number, default: 0 },
+
     paymentMethod: {
         type: String,
-        enum: ['efectivo', 'tarjeta', 'transferencia', 'otro'],
+        enum: ['efectivo', 'tarjeta'],
         default: 'efectivo',
     },
     active: {

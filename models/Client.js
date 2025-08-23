@@ -23,6 +23,9 @@ const ClientSchema = Schema({
     optionalPhone: {
         type: String,
     },
+    whatsappPhone: {
+        type: String,
+    },
     dateCancellation: {
         type: Date,
         default: null, //Fecha de cancelación por defecto es null (activo)

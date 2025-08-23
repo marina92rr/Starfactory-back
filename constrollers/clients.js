@@ -6,6 +6,7 @@ const Label = require('../models/Label');
 const Product = require('../models/store/Product');
 //Utils Baja
 const { isActive, isCancelled, isScheduledCancellation } = require('../utils/clientsStatus');
+const SuscriptionClient = require('../models/SuscriptionClient');
 
 const getClients = async(req, res = response) =>{
     const clients = await Client.find();
@@ -364,25 +365,43 @@ const toggleClientStatusCancellation = async (req, res) => {
   const { idClient } = req.params;
 
   try {
-    const client = await Client.findOne({ idClient: parseInt(idClient) }); // 👈 importante hacer parseInt
+    const id = Number(idClient);
+    if (!Number.isFinite(id)) {
+      return res.status(400).json({ msg: 'idClient inválido' });
+    }
 
+    const client = await Client.findOne({ idClient: id }); // 👈 importante Number
     if (!client) return res.status(404).json({ msg: 'Cliente no encontrado' });
 
     if (isCancelled(client.dateCancellation)) {
+      // Reactivar
       client.dateCancellation = null;
       await client.save();
       return res.json({ msg: 'Cliente reactivado', client });
-    } else {
-      client.dateCancellation = new Date();
-      await client.save();
-      //*Eliminar suscripciones con getSuscriptionByClient
-      return res.json({ msg: 'Cliente dado de baja', client });
     }
+
+    // Dar de baja + eliminar TODAS sus suscripciones
+    client.dateCancellation = new Date();
+    await client.save();
+
+    // Elimina todas las suscripciones del cliente
+    const delSuscription = await SuscriptionClient.deleteMany({ idClient: id }); // 👈 
+    return res.json({
+      msg: 'Cliente dado de baja y suscripciones eliminadas',
+      client,
+      removedSuscriptions: delSuscription.deletedCount
+    });
+
   } catch (error) {
     console.error('Error al cambiar estado del cliente:', error);
-    res.status(500).json({ msg: 'Error interno al cambiar estado del cliente' });
+    return res.status(500).json({
+      msg: 'Error interno al cambiar estado del cliente',
+      error: error.message // 👈 te da la pista exacta
+    });
   }
 };
+
+
 //Programa la baja de un cliente para una fecha futura
 const programClientCancellation = async (req, res) => {
   const { idClient } = req.params;
