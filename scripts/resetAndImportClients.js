@@ -79,7 +79,7 @@ async function importClientsWithLabels(labelMap, rows) {
       email: row['Email'] || '',
       mainPhone: normalizePhone(row['telefono']),
       optionalPhone: normalizePhone(row['telefono2']),
-      whatsappPhone: normalizePhone(row['Telefono Whatsapp']),
+      whatsappPhone: row['Telefono Whatsapp'],
       idUser: new Types.ObjectId(), // cumple con el modelo como ObjectId generado
       idProducts: [],
       idLabels
