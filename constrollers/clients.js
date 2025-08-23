@@ -137,6 +137,7 @@ const updateClient = async(req, res = response) =>{
 const deleteClient = async(req, res = response) =>{
     const {idClient} = req.params;
     try {
+        await SuscriptionClient.deleteMany({ idClient: Number(idClient) }); // Elimina suscripciones asociadas
         const client = await Client.findOneAndDelete({idClient});
         if( !client ){
             return res.status(404).json({

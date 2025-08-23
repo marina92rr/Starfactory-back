@@ -40,6 +40,9 @@ router.put('/:idClient', updateClient );
 //Crear nuevo cliente
 router.post('/', createClient);
 
+//Eliminar cliente (no se usa, se deshabilita)
+router.delete('/:idClient', deleteClient);
+
 //---------------Baja---------------
 
 
