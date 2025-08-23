@@ -9,7 +9,7 @@ const dbConnection = async() =>{
 
     } catch (error) {
         console.log(error);
-        throw new error('Error al iniciar DB')
+        throw new Error('Error al iniciar DB')
     }
 }
 

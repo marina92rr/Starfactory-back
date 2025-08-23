@@ -3,7 +3,7 @@ const express = require('express');
 
 require('dotenv').config();     //configurar archivo env
 const cors = require('cors');
-const {dbConnection} = require('./database/config');
+const { dbConnection } = require('./database/config');
 const { request } = require('http');
 
 
@@ -19,7 +19,15 @@ app.use(cors({
 }));
 
 //Base de Datos DB
-dbConnection();
+(async () => {
+  try {
+    await dbConnection();
+    // …arranca tu server solo si hay DB
+  } catch (e) {
+    console.error(e);
+    process.exit(1);
+  }
+})();
 
 //Escuchar peticion
 app.listen( process.env.PORT, () => {
