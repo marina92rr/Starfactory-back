@@ -77,8 +77,8 @@ async function importClientsWithLabels(labelMap, rows) {
       lastName: row['Apellidos'] || '',
       dni: row['ID'] || new Types.ObjectId(), // Usar columna ID del Excel como DNI
       email: row['Email'] || '',
-      mainPhone: normalizePhone(row['telefono']),
-      optionalPhone: normalizePhone(row['telefono2']),
+      mainPhone: normalizePhone(row['Telefono']),
+      optionalPhone: normalizePhone(row['Telefono2']),
       whatsappPhone: row['Telefono Whatsapp'],
       idUser: new Types.ObjectId(), // cumple con el modelo como ObjectId generado
       idProducts: [],
