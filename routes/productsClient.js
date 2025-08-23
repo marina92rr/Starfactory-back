@@ -19,7 +19,7 @@ router.get('/unpaid/:idClient', getProductsClientUnpaid);
 router.post( '/', createProductClient);
 
 //Cambiar etiqueta
-router.put('/:idProductClient', updateProductClient);
+router.put('/unpaid/:idProductClient', updateProductClient);
 
 //Eliminar etiqueta
 router.delete('/unpaid/:idProductClient', deleteProductClient);

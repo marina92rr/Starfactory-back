@@ -14,7 +14,8 @@ const { getClients, createClient,
         cancelScheduledCancellation,
         getClientsWithScheduledCancellation,
         getLabelsOfClient,
-        getClientsByLabels
+        getClientsByLabels,
+        deleteClient
  } = require('../constrollers/clients');
 const { validateFields } = require('../middlewares/validate-fields');
 
