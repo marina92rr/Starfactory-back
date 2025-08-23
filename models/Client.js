@@ -22,9 +22,11 @@ const ClientSchema = Schema({
     },
     optionalPhone: {
         type: String,
+        required: false,
     },
     whatsappPhone: {
         type: String,
+        required: false,
     },
     dateCancellation: {
         type: Date,
