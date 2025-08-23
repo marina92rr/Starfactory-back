@@ -182,48 +182,15 @@ const createProductClient = async (req, res) => {
 //------------------Cambiar producto de cliente------------------
 const updateProductClient = async (req, res = response) => {
   const { idProductClient } = req.params;
-  const { idProduct, idQuota, paymentMethod, paid } = req.body;
+  const { paymentMethod, paid } = req.body;
 
   try {
     const venta = await ProductClient.findById(idProductClient);
     if (!venta) {
       return res.status(404).json({ ok: false, msg: 'Venta no encontrada' });
     }
-
-    // Validaciones cruzadas
-    if (idProduct && idQuota) {
-      return res.status(400).json({
-        ok: false,
-        msg: 'Solo puedes enviar un producto o una cuota, no ambos.'
-      });
-    }
-
-    if (!idProduct && !idQuota) {
-      return res.status(400).json({
-        ok: false,
-        msg: 'Debes enviar al menos un producto o una cuota.'
-      });
-    }
-
-    let finalIdProduct = null;
-    let finalIdQuota = null;
-
-    if (idProduct) {
-      const product = await Product.findById(idProduct);
-      if (!product) return res.status(404).json({ msg: 'Producto no encontrado' });
-      finalIdProduct = product.idProduct;
-    }
-
-    if (idQuota) {
-      const cuota = await Quota.findById(idQuota);
-      if (!cuota) return res.status(404).json({ msg: 'Cuota no encontrada' });
-      finalIdQuota = cuota.idQuota;
-    }
-
     // ------------------Asignar campos actualizados------------------
     Object.assign(venta, {
-      idProduct: finalIdProduct,
-      idQuota: finalIdQuota,
       paymentMethod: paymentMethod.toLowerCase(),
       paid: paid,
       paymentDate: new Date()
