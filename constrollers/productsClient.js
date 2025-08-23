@@ -182,7 +182,7 @@ const createProductClient = async (req, res) => {
 //------------------Cambiar producto de cliente------------------
 const updateProductClient = async (req, res = response) => {
   const { idProductClient } = req.params;
-  const { idProduct, idQuota, ...rest } = req.body;
+  const { idProduct, idQuota, paymentMethod, paid } = req.body;
 
   try {
     const venta = await ProductClient.findById(idProductClient);
@@ -224,7 +224,9 @@ const updateProductClient = async (req, res = response) => {
     Object.assign(venta, {
       idProduct: finalIdProduct,
       idQuota: finalIdQuota,
-      ...rest
+      paymentMethod: paymentMethod.toLowerCase(),
+      paid: paid,
+      paymentDate: new Date()
     });
 
     await venta.save();
