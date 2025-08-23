@@ -185,16 +185,11 @@ const updateProductClient = async (req, res = response) => {
   const { paymentMethod, paid } = req.body;
 
   try {
-    const venta = await ProductClient.find({ idProductClient: idProductClient });
-    if (!venta) {
-      return res.status(404).json({ ok: false, msg: 'Venta no encontrada' });
-    }
-    // ------------------Asignar campos actualizados------------------
-    venta.paymentMethod = paymentMethod.toLowerCase();
-    venta.paid = paid;
-    venta.paymentDate = new Date(); // Fecha actual como fecha de pago
-
-    await venta.save();
+    const venta = await ProductClient.findOneAndUpdate(
+      { idProductClient: idProductClient },
+      { $set: { paymentMethod: paymentMethod.toLowerCase(), paid: paid, paymentDate: new Date() } },
+      { new: true } // Devuelve el documento actualizado
+    );
 
     res.json({
       ok: true,
