@@ -1,4 +1,4 @@
-const {response} = require('express');
+const { response } = require('express');
 const Client = require('../models/Client');
 
 //Acciones con Label + Product
@@ -8,17 +8,17 @@ const Product = require('../models/store/Product');
 const { isActive, isCancelled, isScheduledCancellation } = require('../utils/clientsStatus');
 const SuscriptionClient = require('../models/SuscriptionClient');
 
-const getClients = async(req, res = response) =>{
-    const clients = await Client.find();
+const getClients = async (req, res = response) => {
+  const clients = await Client.find();
 
-    res.json({
-        ok:true,
-        clients
-    })
+  res.json({
+    ok: true,
+    clients
+  })
 }
 
-const getLimitPageClients = async(req, res = response) =>{
-    const page = parseInt(req.query.page) || 1;
+const getLimitPageClients = async (req, res = response) => {
+  const page = parseInt(req.query.page) || 1;
   const limit = 30;
   const skip = (page - 1) * limit;
 
@@ -40,32 +40,32 @@ const getLimitPageClients = async(req, res = response) =>{
   }
 };
 
-const getClientByID = async(req, res =response) =>{
+const getClientByID = async (req, res = response) => {
 
-    const { idClient } = req.params;
-    try {
-        const client = await Client.findOne({ idClient });
-        if (!client) {
-          return res.status(404).json({
-            ok: false,
-            msg: `Cliente con ID ${idClient} no encontrado.`
-          });
-        }
-        res.json({
-          ok: true,
-          client
-        });
-        } catch (error) {
-        console.error('Error al obtener cliente por ID:', error);
-        res.status(500).json({
-          ok: false,
-          msg: 'Hable con el administrador'
-        });
+  const { idClient } = req.params;
+  try {
+    const client = await Client.findOne({ idClient });
+    if (!client) {
+      return res.status(404).json({
+        ok: false,
+        msg: `Cliente con ID ${idClient} no encontrado.`
+      });
     }
+    res.json({
+      ok: true,
+      client
+    });
+  } catch (error) {
+    console.error('Error al obtener cliente por ID:', error);
+    res.status(500).json({
+      ok: false,
+      msg: 'Hable con el administrador'
+    });
+  }
 }
 
-const createClient = async(req, res = response)  =>{
-   try {
+const createClient = async (req, res = response) => {
+  try {
     const normalizeText = (text) => {
       return text
         .normalize("NFD")                     // separa letras de los acentos
@@ -100,62 +100,62 @@ const createClient = async(req, res = response)  =>{
   }
 }
 
-const updateClient = async(req, res = response) =>{
-    const {idClient} = req.params;
-    try {
+const updateClient = async (req, res = response) => {
+  const { idClient } = req.params;
+  try {
 
-        const client = await Client.findOne({idClient});
-        if(!client){
-            //Si no existe el ID
-            return res.status(404).json({
-                ok:false,
-                msg: 'Cliente no existe'
-            })
-        }
-
-        const newClient ={
-            ...req.body
-        }
-
-        const clientUpdate = await Client.findOneAndUpdate({idClient}, newClient, {new: true});
-        //JSON Update
-        res.json({
-            ok:true,
-            client: clientUpdate
-        })
-        
-    } catch (error) {
-        //Si no pasa por try
-        res.status(500).json({
-            ok:false,
-            msg: 'Hable con el administrador'
-        })
+    const client = await Client.findOne({ idClient });
+    if (!client) {
+      //Si no existe el ID
+      return res.status(404).json({
+        ok: false,
+        msg: 'Cliente no existe'
+      })
     }
-   
+
+    const newClient = {
+      ...req.body
+    }
+
+    const clientUpdate = await Client.findOneAndUpdate({ idClient }, newClient, { new: true });
+    //JSON Update
+    res.json({
+      ok: true,
+      client: clientUpdate
+    })
+
+  } catch (error) {
+    //Si no pasa por try
+    res.status(500).json({
+      ok: false,
+      msg: 'Hable con el administrador'
+    })
+  }
+
 }
 
-const deleteClient = async(req, res = response) =>{
-    const {idClient} = req.params;
-    try {
-        await SuscriptionClient.deleteMany({ idClient: Number(idClient) }); // Elimina suscripciones asociadas
-        const client = await Client.findOneAndDelete({idClient});
-        if( !client ){
-            return res.status(404).json({
-                ok: false,
-                msg: ' El cliente no existe'
-            })
-        }
-
-         res.json({ok:true});
-
-    } catch (error) {
-        
-        console.log(error);
-        res.status(500).json({
-            ok:false,
-            msg: 'Hable con el administrador'
-        })
+const deleteClient = async (req, res = response) => {
+  const { idClient } = req.params;
+  try {
+    await SuscriptionClient.deleteMany({ idClient: Number(idClient) }); // Elimina suscripciones asociadas
+    const client = await Client.findOneAndDelete({ idClient });
+    if (!client) {
+      return res.status(404).json({
+        ok: false,
+        msg: ' El cliente no existe'
+      })
     }
+
+    res.json({ ok: true });
+
+  } catch (error) {
+
+    console.log(error);
+    res.status(500).json({
+      ok: false,
+      msg: 'Hable con el administrador'
+    })
+  }
 }
 
 //---------------LABEL-------------------------
@@ -163,54 +163,54 @@ const deleteClient = async(req, res = response) =>{
 //Obtener datos label del cliente
 const getLabelsOfClient = async (req, res) => {
   const idClient = Number(req.params.idClient);
-console.log('Recibo idClient:', idClient);
+  console.log('Recibo idClient:', idClient);
 
-const client = await Client.findOne({ idClient });
-console.log('Cliente encontrado:', client);
+  const client = await Client.findOne({ idClient });
+  console.log('Cliente encontrado:', client);
 
-if (!client) return res.status(404).json({ msg: 'Cliente no encontrado' });
+  if (!client) return res.status(404).json({ msg: 'Cliente no encontrado' });
 
-console.log('Consultando etiquetas con:', client.idLabels);
+  console.log('Consultando etiquetas con:', client.idLabels);
 
-const labels = await Label.find({ idLabel: { $in: client.idLabels } });
-console.log('Etiquetas encontradas:', labels);
+  const labels = await Label.find({ idLabel: { $in: client.idLabels } });
+  console.log('Etiquetas encontradas:', labels);
 
-res.json(labels);
+  res.json(labels);
 };
 
 //Obtener labels de cliente
-const getlabelsToClient = async( req, res= response) =>{
-    const { idClient} = req.params;
+const getlabelsToClient = async (req, res = response) => {
+  const { idClient } = req.params;
 
-    try {
-        const client = await Client.findOne({idClient})
-        .populate('labels');
+  try {
+    const client = await Client.findOne({ idClient })
+      .populate('labels');
 
-        if(!client){
-            return res.status(404).json({
-                ok: false,
-                msg: 'Cliente no encontrado'
-            })
-        }
-
-        const labelsClient = client.labels
-        //Array de etiquetas
-        res.json({
-            ok:true,
-            labels: labelsClient
-        })
-        
-    } catch (error) {
-         res.status(500).json({ 
-            ok:false,
-            msg: 'Hable con el administrador' 
-        });
+    if (!client) {
+      return res.status(404).json({
+        ok: false,
+        msg: 'Cliente no encontrado'
+      })
     }
+
+    const labelsClient = client.labels
+    //Array de etiquetas
+    res.json({
+      ok: true,
+      labels: labelsClient
+    })
+
+  } catch (error) {
+    res.status(500).json({
+      ok: false,
+      msg: 'Hable con el administrador'
+    });
+  }
 }
 
 //Añadir Label a cliente
-const addLabelToClient = async(req, res = response) =>{
-     try {
+const addLabelToClient = async (req, res = response) => {
+  try {
     let { idClient, idLabel, idLabels } = req.body;
 
     // soporta las dos formas: un solo idLabel o un array idLabels
@@ -248,34 +248,34 @@ const addLabelToClient = async(req, res = response) =>{
 }
 
 //Eliminar etiquetas de Cliente por ID
-const removeLabelToClient = async(req, res= response) =>{
-    try {
+const removeLabelToClient = async (req, res = response) => {
+  try {
     const { idClient, idLabel } = req.params;
     const labelNum = Number(idLabel);
 
     // 0) Validar que idLabel sea un número válido
     if (isNaN(labelNum)) {
-      return res.status(400).json({ 
-        ok: false, 
-        msg: 'idLabel debe ser un número' 
+      return res.status(400).json({
+        ok: false,
+        msg: 'idLabel debe ser un número'
       });
     }
 
     // 1) Buscar cliente
     const client = await Client.findOne({ idClient });
     if (!client) {
-      return res.status(404).json({ 
-        ok: false, 
-        msg: 'Cliente no encontrado' 
+      return res.status(404).json({
+        ok: false,
+        msg: 'Cliente no encontrado'
       });
     }
 
     // 2) Comprobar que la etiqueta exista
     const label = await Label.findOne({ idLabel: labelNum });
     if (!label) {
-      return res.status(404).json({ 
-        ok: false, 
-        msg: 'Etiqueta no encontrada' 
+      return res.status(404).json({
+        ok: false,
+        msg: 'Etiqueta no encontrada'
       });
     }
 
@@ -288,15 +288,15 @@ const removeLabelToClient = async(req, res= response) =>{
 
     // 4) Devolver sólo el array de etiquetas pobladas
     return res.json({
-      ok:     true,
-      msg:    'Etiqueta eliminada del cliente',
+      ok: true,
+      msg: 'Etiqueta eliminada del cliente',
       labels: updatedClient.labels
     });
 
   } catch (error) {
     console.error(error);
     return res.status(500).json({
-      ok:  false,
+      ok: false,
       msg: 'Error en el servidor'
     });
   }
@@ -305,7 +305,7 @@ const removeLabelToClient = async(req, res= response) =>{
 
 //Filtrar clientes por etiquetas
 const getClientsByLabels = async (req, res = response) => {
-   try {
+  try {
     const { labelIds } = req.body; // array de numbers
 
     if (!Array.isArray(labelIds) || labelIds.length === 0) {
@@ -327,12 +327,12 @@ const getClientsByLabels = async (req, res = response) => {
 
 
 //---------------PRODUCT-------------------------
-const addProductToClient = async(req, res = response) =>{
-    try {
+const addProductToClient = async (req, res = response) => {
+  try {
     const { idClient, idProduct } = req.body;
 
     // 1. Comprueba que exista el cliente
-    const client = await Client.findOne({idClient});
+    const client = await Client.findOne({ idClient });
     if (!client) {
       return res.status(404).json({ message: 'Cliente no encontrado' });
     }
@@ -345,7 +345,7 @@ const addProductToClient = async(req, res = response) =>{
 
     // 3. Evita duplicados con $addToSet (solo añade si no existe)
     const updatedClient = await Client.findOneAndUpdate(
-      {idClient},
+      { idClient },
       { $addToSet: { idProducts: idProduct } },
       { new: true }                           // para devolver el documento actualizado
     ).populate('idProducts');                   // opcional: para devolver los datos de las etiquetas
@@ -408,7 +408,7 @@ const programClientCancellation = async (req, res) => {
   const { idClient } = req.params;
   const { cancelDate } = req.body;
 
- try {
+  try {
     const client = await Client.findOne({ idClient: parseInt(idClient) });
     if (!client) return res.status(404).json({ msg: 'Cliente no encontrado' });
 
@@ -461,7 +461,7 @@ const cancelScheduledCancellation = async (req, res) => {
 
 //Get clients with future cancellations
 const getClientsWithScheduledCancellation = async (req, res) => {
- try {
+  try {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
@@ -483,25 +483,25 @@ const getClientsWithScheduledCancellation = async (req, res) => {
 
 
 module.exports = {
-    getClients,
-    getClientByID,
-    createClient,
-    updateClient,
-    deleteClient,
-    getLimitPageClients,
-    //Baja
-    toggleClientStatusCancellation,
-    programClientCancellation,
-    cancelScheduledCancellation, 
-    getClientsWithScheduledCancellation,
+  getClients,
+  getClientByID,
+  createClient,
+  updateClient,
+  deleteClient,
+  getLimitPageClients,
+  //Baja
+  toggleClientStatusCancellation,
+  programClientCancellation,
+  cancelScheduledCancellation,
+  getClientsWithScheduledCancellation,
 
-    //*LABELS
-    getlabelsToClient,
-    addLabelToClient,
-    removeLabelToClient,
-    getLabelsOfClient,
-    getClientsByLabels,
+  //*LABELS
+  getlabelsToClient,
+  addLabelToClient,
+  removeLabelToClient,
+  getLabelsOfClient,
+  getClientsByLabels,
 
-    //*PRODUCTS
-    addProductToClient
+  //*PRODUCTS
+  addProductToClient
 }
