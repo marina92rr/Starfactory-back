@@ -185,7 +185,7 @@ const updateProductClient = async (req, res = response) => {
   const { paymentMethod, paid } = req.body;
 
   try {
-    const venta = await ProductClient.findById(idProductClient);
+    const venta = await ProductClient.find({ idProductClient: idProductClient });
     if (!venta) {
       return res.status(404).json({ ok: false, msg: 'Venta no encontrada' });
     }
