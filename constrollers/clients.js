@@ -112,7 +112,6 @@ const updateClient = async (req, res = response) => {
         msg: 'Cliente no existe'
       })
     }
-
     const newClient = {
       ...req.body
     }

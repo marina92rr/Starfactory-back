@@ -55,7 +55,8 @@ const getAllProductsClient = async (req, res = response) => {
     end.setHours(23, 59, 59, 999);
 
     const productsClient = await ProductClient.find({
-      buyDate: { $gte: start, $lte: end }
+      paymentDate: { $gte: start, $lte: end },
+      paid: true
     });
 
     res.json({
@@ -179,48 +180,72 @@ const createProductClient = async (req, res) => {
   }
 };
 
-//------------------Cambiar producto de cliente------------------
+
+
+//------------------Actualizar producto de cliente (simple)------------------
 const updateProductClient = async (req, res = response) => {
   const { idProductClient } = req.params;
-  const { paymentMethod, paid } = req.body;
+  const { paid } = req.body; // siempre viene
 
   try {
-    const venta = await ProductClient.findOneAndUpdate(
-      { idProductClient: idProductClient },
-      { $set: { paymentMethod: paymentMethod.toLowerCase(), paid: paid, paymentDate: new Date() } },
-      { new: true } // Devuelve el documento actualizado
+    // Campos permitidos según paid
+    const allowed = paid === false
+      ? ['paid', 'paymentMethod']
+      : ['name', 'price', 'paymentDate', 'paymentMethod', 'paid'];
+
+    // Construir updateData solo con los campos permitidos presentes en el body
+    const updateData = {};
+    for (const key of allowed) {
+      if (req.body[key] !== undefined) updateData[key] = req.body[key];
+    }
+
+    // Normalizar método de pago si viene
+    if (updateData.paymentMethod) {
+      updateData.paymentMethod = String(updateData.paymentMethod).toLowerCase();
+    }
+
+    // Si queda pagada y no mandan paymentDate → poner ahora
+    if (paid === true && !('paymentDate' in updateData)) {
+      updateData.paymentDate = new Date();
+    }
+
+    // dentro de tu updateProductClient, tras construir updateData
+    if (typeof updateData.paymentDate === 'string' && updateData.paymentDate) {
+      // Fuerza la hora a medianoche local/UTC según prefieras
+      updateData.paymentDate = new Date(`${updateData.paymentDate}T00:00:00`);
+    }
+    // Un único update
+    const updated = await ProductClient.findOneAndUpdate(
+      { idProductClient },
+      { $set: updateData },
+      { new: true, runValidators: true }
     );
 
-    res.json({
-      ok: true,
-      msg: 'Venta actualizada correctamente',
-      venta
-    });
+    if (!updated) {
+      return res.status(404).json({ ok: false, msg: 'Venta no encontrada' });
+    }
 
+    res.json({ ok: true, msg: 'Venta actualizada correctamente', venta: updated });
   } catch (error) {
-    res.status(500).json({
-      ok: false,
-      msg: 'Error al actualizar la venta',
-      error: error.message
-    });
+    res.status(500).json({ ok: false, msg: 'Error al actualizar la venta', error: error.message });
   }
 };
 
 //------------------eliminar productos de cliente------------------
 const deleteProductClient = async (req, res = response) => {
-    const { idProductClient } = req.params;
+  const { idProductClient } = req.params;
 
-   try {
-    
+  try {
+
     // Borra SOLO si está impagado
     const removeProductClient = await ProductClient.deleteOne({ idProductClient });
-    
-    return res.json({ ok:true, msg:'Venta impagada eliminada', removeProductClient });
-   
+
+    return res.json({ ok: true, msg: 'Venta impagada eliminada', removeProductClient });
+
 
   } catch (e) {
     console.error('Error eliminando impago:', e);
-    res.status(500).json({ ok:false, msg:'Error interno eliminando impago' });
+    res.status(500).json({ ok: false, msg: 'Error interno eliminando impago' });
   }
 };
 
