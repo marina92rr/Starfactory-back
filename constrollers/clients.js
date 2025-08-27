@@ -7,6 +7,7 @@ const Product = require('../models/store/Product');
 //Utils Baja
 const { isActive, isCancelled, isScheduledCancellation } = require('../utils/clientsStatus');
 const SuscriptionClient = require('../models/SuscriptionClient');
+const ProductClient = require('../models/ProductClient');
 
 const getClients = async (req, res = response) => {
   const clients = await Client.find();
@@ -363,6 +364,8 @@ const addProductToClient = async (req, res = response) => {
 // Cambia el estado de un cliente entre activo y cancelado
 const toggleClientStatusCancellation = async (req, res) => {
   const { idClient } = req.params;
+  const { removeSales } = req.body;  //Eliminar ventas
+
 
   try {
     const id = Number(idClient);
@@ -370,8 +373,16 @@ const toggleClientStatusCancellation = async (req, res) => {
       return res.status(400).json({ msg: 'idClient inválido' });
     }
 
-    const client = await Client.findOne({ idClient: id }); // 👈 importante Number
+    const client = await Client.findOne({ idClient: id }); // 👈 Pasar a Number
     if (!client) return res.status(404).json({ msg: 'Cliente no encontrado' });
+
+    //si el check es true se elimine los productos del cliente no pagados
+    if (removeSales === true) {
+      await ProductClient.deleteMany({
+        idClient,
+        paid: false
+      });
+    }
 
     if (isCancelled(client.dateCancellation)) {
       // Reactivar
@@ -402,14 +413,23 @@ const toggleClientStatusCancellation = async (req, res) => {
 };
 
 
-//Programa la baja de un cliente para una fecha futura
+//Programa la baja 
 const programClientCancellation = async (req, res) => {
   const { idClient } = req.params;
   const { cancelDate } = req.body;
+  const {removeSales} = req.body;
+
 
   try {
     const client = await Client.findOne({ idClient: parseInt(idClient) });
     if (!client) return res.status(404).json({ msg: 'Cliente no encontrado' });
+
+    if(removeSales === true){
+      await ProductClient.deleteMany({
+        idClient,
+        paid: false
+      });
+    }
 
     // Validar la fecha de entrada
     const futureDate = new Date(cancelDate);
