@@ -19,7 +19,8 @@ const getProductsClient = async (req, res = response) => {
       });
     }
 
-    const productsClient = await ProductClient.find({ idClient: Number(idClient) });
+    const productsClient = await ProductClient.find({ idClient: Number(idClient) })
+    .sort({ buyDate: -1 });
 
     res.json({
       ok: true,
@@ -57,7 +58,8 @@ const getAllProductsClient = async (req, res = response) => {
     const productsClient = await ProductClient.find({
       paymentDate: { $gte: start, $lte: end },
       paid: true
-    });
+    })
+    .sort({ buyDate: -1 });
 
     res.json({
       ok: true,
@@ -82,7 +84,8 @@ const getProductsClientPaid = async (req, res = response) => {
     }
 
     // PAGADOS
-    const productsClientPaid = await ProductClient.find({ idClient: Number(idClient), paid: true });
+    const productsClientPaid = await ProductClient.find({ idClient: Number(idClient), paid: true })
+    .sort({ buyDate: -1 });
     return res.json({ ok: true, productsClientPaid });   // 👈 clave EXACTA
 
   } catch (error) {
@@ -99,7 +102,8 @@ const getProductsClientUnpaid = async (req, res = response) => {
       return res.status(400).json({ ok: false, msg: 'Debe proporcionar un idClient en la URL' });
     }
     // NO PAGADOS
-    const productsClientUnpaid = await ProductClient.find({ idClient: Number(idClient), paid: false });
+    const productsClientUnpaid = await ProductClient.find({ idClient: Number(idClient), paid: false })
+    .sort({ buyDate: -1 });
     return res.json({ ok: true, productsClientUnpaid }); // 👈 clave EXACTA
 
 
