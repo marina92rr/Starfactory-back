@@ -117,7 +117,7 @@ async function generateMonthlySales() {
 // Programar la tarea para que se ejecute a las 19:05 del día 30 de cada mes.
 // Formato Cron: 'minuto hora día-del-mes mes día-de-la-semana'
 // '5 19 30 * *' significa a las 19:05 del día 30 del mes.
-cron.schedule('10 19 30 * *', () => {
+cron.schedule('15 19 30 * *', () => {
   console.log(`[CRON] Tarea disparada a las ${new Date().toISOString()}`);
   generateMonthlySales();
 }, {
