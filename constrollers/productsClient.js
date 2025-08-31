@@ -253,6 +253,52 @@ const deleteProductClient = async (req, res = response) => {
   }
 };
 
+//------------------ Resumen mensual de ventas ------------------
+// Esta función agrega todas las ventas pagadas agrupándolas por mes (formato YYYY-MM).
+// Devuelve el importe total de ventas y el número de operaciones por mes.
+const getMonthlySummary = async (req, res = response) => {
+  try {
+    const summary = await ProductClient.aggregate([
+      { $match: { paid: true, paymentDate: { $ne: null } } },
+      {
+        $group: {
+          _id: { $dateToString: { format: '%Y-%m', date: '$paymentDate' } },
+          totalSales: { $sum: { $subtract: ['$price', '$discount'] } },
+          countSales: { $sum: 1 },
+        },
+      },
+      { $sort: { _id: 1 } },
+    ]);
+    return res.json({ ok: true, summary });
+  } catch (error) {
+    console.error('❌ Error al obtener resumen mensual:', error);
+    return res.status(500).json({ ok: false, msg: 'Error al obtener resumen mensual' });
+  }
+};
+
+//------------------ Resumen de ventas por método de pago ------------------
+// Agrupa todas las ventas pagadas por el campo paymentMethod, sumando
+// el importe neto y el número de operaciones para cada método.  El
+// resultado se utiliza en el frontend para mostrar un gráfico de tarta.
+const getPaymentMethodSummary = async (req, res = response) => {
+  try {
+    const summary = await ProductClient.aggregate([
+      { $match: { paid: true, paymentDate: { $ne: null } } },
+      {
+        $group: {
+          _id: '$paymentMethod',
+          totalSales: { $sum: { $subtract: ['$price', '$discount'] } },
+          countSales: { $sum: 1 },
+        },
+      },
+      { $sort: { totalSales: -1 } },
+    ]);
+    return res.json({ ok: true, summary });
+  } catch (error) {
+    console.error('❌ Error al obtener resumen por método de pago:', error);
+    return res.status(500).json({ ok: false, msg: 'Error al obtener resumen por método de pago' });
+  }
+};
 
 module.exports = {
   getProductsClient,
@@ -261,5 +307,7 @@ module.exports = {
   getProductsClientUnpaid,
   createProductClient,
   updateProductClient,
-  deleteProductClient
+  deleteProductClient,
+  getMonthlySummary,
+  getPaymentMethodSummary
 }
