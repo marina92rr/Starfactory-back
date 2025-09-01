@@ -15,7 +15,7 @@ npm install
 
 # Reinicio del proceso con PM2
 echo "🧼 Eliminando proceso PM2 existente..."
-pm2 delete 0 || echo "ℹ️ No hay proceso 0 corriendo (se ignora)"
+pm2 delete star-back || echo "ℹ️ No hay proceso star-back corriendo (se ignora)"
 
 echo "🚀 Iniciando backend con PM2..."
 pm2 start index.js --name star-back
