@@ -163,17 +163,17 @@ const deleteClient = async (req, res = response) => {
 //Obtener datos label del cliente
 const getLabelsOfClient = async (req, res) => {
   const idClient = Number(req.params.idClient);
-  console.log('Recibo idClient:', idClient);
+  //console.log('Recibo idClient:', idClient);
 
   const client = await Client.findOne({ idClient });
-  console.log('Cliente encontrado:', client);
+  //console.log('Cliente encontrado:', client);
 
   if (!client) return res.status(404).json({ msg: 'Cliente no encontrado' });
 
-  console.log('Consultando etiquetas con:', client.idLabels);
+  //console.log('Consultando etiquetas con:', client.idLabels);
 
   const labels = await Label.find({ idLabel: { $in: client.idLabels } });
-  console.log('Etiquetas encontradas:', labels);
+  //console.log('Etiquetas encontradas:', labels);
 
   res.json(labels);
 };

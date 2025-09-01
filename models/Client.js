@@ -55,6 +55,12 @@ ClientSchema.plugin(AutoIncrement, {
     collection: 'countsClientId'
 });
 
+// Le indicamos que genere un campo numérico llamado 'idClient'
+ClientSchema.plugin(AutoIncrement, {
+    inc_field: 'dni',
+    collection: 'countsClientId'
+});
+
 
 // Virtual para poder hacer .populate('labels')
 ClientSchema.virtual('labels', {
