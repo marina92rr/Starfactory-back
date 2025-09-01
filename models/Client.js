@@ -9,11 +9,6 @@ const ClientSchema = Schema({
     lastName: {
         type: String,
     },
-    dni: {
-        type: String,
-        required: false,
-        unique: true
-    },
     email: {
         type: String,
     },

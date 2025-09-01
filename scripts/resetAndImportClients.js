@@ -84,9 +84,7 @@ async function createOrReuseLabels(uniqueLabels) {
 
 async function importClientsWithLabels(labelMap, rows) {
   for (const row of rows) {
-    // Tenías "dni" comentado; si no usas DNI real, usaré la columna ID o genero un ObjectId
-    const dni = row['ID'] || '';
-
+    
     const etiquetas = String(row['Etiquetas'] || '')
       .split(',')
       .map(e => e.trim())
@@ -98,8 +96,7 @@ async function importClientsWithLabels(labelMap, rows) {
 
     const clientData = {
       name: row['Nombre'] || '',
-      lastName: row['Apellidos'] || '',
-      dni: dni || new Types.ObjectId(),               // si no hay ID, generamos uno
+      lastName: row['Apellidos'] || '',           // si no hay ID, generamos uno
       email: row['Email'] || '',                      // puede venir vacío
       mainPhone: normalizePhone(row['Telefono']),
       optionalPhone: normalizePhone(row['Telefono2']),
@@ -112,9 +109,9 @@ async function importClientsWithLabels(labelMap, rows) {
     try {
       const client = new Client(clientData);
       await client.save();
-      console.log(`✅ Cliente insertado: ${client.name} ${client.lastName} (DNI: ${dni || '—'})`);
+      console.log(`✅ Cliente insertado: ${client.name} ${client.lastName}`);
     } catch (err) {
-      console.error(`❌ Error insertando cliente ${dni || '(sin ID)'}: ${err.message}`);
+      console.error(`❌ Error insertando cliente ${row['Nombre'] || '(sin ID)'}: ${err.message}`);
     }
   }
 }
