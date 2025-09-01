@@ -1,5 +1,5 @@
 const { Router } = require("express");
-const { getProductsClient, createProductClient, updateProductClient, deleteProductClient, getProductsClientUnpaid, getProductsClientPaid, getAllProductsClient, getMonthlySummary, getPaymentMethodSummary } = require("../constrollers/productsClient");
+const { getProductsClient, createProductClient, updateProductClient, deleteProductClient, getProductsClientUnpaid, getProductsClientPaid, getAllProductsClient, getMonthlySummary, getPaymentMethodSummary, createAdministrationProductClient } = require("../constrollers/productsClient");
 
 
 //-----Rutas-----
@@ -18,13 +18,13 @@ router.get('/paid/:idClient', getProductsClientPaid);
 router.get('/unpaid/:idClient', getProductsClientUnpaid);
 
 
-//Añadir etiqueta
+//Añadir Product
 router.post( '/', createProductClient);
 
-//Cambiar etiqueta
+//Cambiar Product
 router.put('/unpaid/:idProductClient', updateProductClient);
 
-//Eliminar etiqueta
+//Eliminar Product
 router.delete('/unpaid/:idProductClient', deleteProductClient);
 
 // --- Nueva ruta ---
@@ -43,6 +43,8 @@ router.get('/summary/monthly', getMonthlySummary);
 // { _id: 'efectivo', totalSales: Number, countSales: Number }
 // donde _id es el método de pago normalizado.
 router.get('/summary/payment-method', getPaymentMethodSummary);
+
+router.post('/administration', createAdministrationProductClient);
 
 module.exports= router;
 

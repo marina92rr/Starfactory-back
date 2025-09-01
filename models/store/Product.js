@@ -23,6 +23,10 @@ const ProductSchema = Schema({
         ref: 'Category',                      //Nombre modelo al que va unido
         required: true
     },
+    isVisible: {
+        type: Boolean,
+        default: true
+    }
 });
 
 

@@ -10,7 +10,7 @@ const ProductClientSchema = Schema({
 
     idClient: {
         type: Number,
-        required: true
+        required: false
     },
     idProduct: {
         type: Number,
@@ -39,7 +39,7 @@ const ProductClientSchema = Schema({
 
     paymentMethod: {
         type: String,
-        enum: ['efectivo', 'tarjeta', 'transferencia', 'otro'],
+        enum: ['efectivo', 'tarjeta'],
         default: 'efectivo',
     },
     paid: {

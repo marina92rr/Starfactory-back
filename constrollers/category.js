@@ -7,7 +7,7 @@ const Category = require('../models/store/Category');
 
 //obtener categorias
 const getCategories = async( req, res= response) =>{
-    const categories = await Category.find();
+    const categories = await Category.find({ isVisible: true });
     res.json({
         ok: true,
         categories
@@ -93,10 +93,6 @@ const deleteCategory = async(req, res = response) =>{
         })
     }
 }
-
-
-
-
 
 module.exports = {
     getCategories,

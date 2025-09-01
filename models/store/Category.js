@@ -10,6 +10,10 @@ const CategorySchema = Schema({
         type : String,
         require: true
     },
+    isVisible:{
+        type: Boolean,
+        default: true
+    }
 
 });
 

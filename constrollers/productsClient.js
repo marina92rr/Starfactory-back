@@ -20,7 +20,7 @@ const getProductsClient = async (req, res = response) => {
     }
 
     const productsClient = await ProductClient.find({ idClient: Number(idClient) })
-    .sort({ buyDate: -1 });
+      .sort({ buyDate: -1 });
 
     res.json({
       ok: true,
@@ -59,7 +59,7 @@ const getAllProductsClient = async (req, res = response) => {
       paymentDate: { $gte: start, $lte: end },
       paid: true
     })
-    .sort({ buyDate: -1 });
+      .sort({ buyDate: -1 });
 
     res.json({
       ok: true,
@@ -85,7 +85,7 @@ const getProductsClientPaid = async (req, res = response) => {
 
     // PAGADOS
     const productsClientPaid = await ProductClient.find({ idClient: Number(idClient), paid: true })
-    .sort({ buyDate: -1 });
+      .sort({ buyDate: -1 });
     return res.json({ ok: true, productsClientPaid });   // 👈 clave EXACTA
 
   } catch (error) {
@@ -103,7 +103,7 @@ const getProductsClientUnpaid = async (req, res = response) => {
     }
     // NO PAGADOS
     const productsClientUnpaid = await ProductClient.find({ idClient: Number(idClient), paid: false })
-    .sort({ buyDate: -1 });
+      .sort({ buyDate: -1 });
     return res.json({ ok: true, productsClientUnpaid }); // 👈 clave EXACTA
 
 
@@ -112,6 +112,48 @@ const getProductsClientUnpaid = async (req, res = response) => {
     return res.status(500).json({ ok: false, msg: 'Error al obtener los productos no pagados del cliente' });
   }
 };
+
+//------------------crear producto de cliente------------------
+const createAdministrationProductClient = async (req, res) => {
+  try {
+    const {
+      name,
+      price,
+      paymentMethod,
+      paymentDate
+    } = req.body;
+
+    //si es negativo resta 
+    const amount = Number(price);
+    if (!Number.isFinite(amount) || amount <= 0) {
+      return res.status(400).json({ ok: false, msg: 'price debe ser un número > 0.' });
+    }
+
+    const now = new Date();
+
+    const newEntry = new ProductClient({
+      idClient: 0,
+      idProduct: 67,
+      name: name,
+      price: amount,
+      discount: 0,
+      paymentMethod: paymentMethod.toLowerCase(),
+      paid: true,
+      idSalesClient: 0,
+      buyDate: now,
+      paymentDate: paymentDate ?? now
+    });
+
+
+    const saved = await newEntry.save();
+    return res.status(201).json({ ok: true, productClient: saved });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: 'Error al guardar los productos' });
+  }
+};
+
 
 //------------------crear producto de cliente------------------
 const createProductClient = async (req, res) => {
@@ -309,5 +351,6 @@ module.exports = {
   updateProductClient,
   deleteProductClient,
   getMonthlySummary,
-  getPaymentMethodSummary
+  getPaymentMethodSummary,
+  createAdministrationProductClient
 }

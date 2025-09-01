@@ -4,7 +4,7 @@ const Product = require('../models/store/Product');
 
 //getProduct
 const getProducts = async( req, res = response) =>{
-    const products = await Product.find();
+    const products = await Product.find( { isVisible: true} );
     res.json({
         ok:true,
         products
@@ -88,7 +88,7 @@ const productsByIdCategory = async(req, res = response) =>{
     const {idCategory} = req.params;
 
     try {
-        const products = await Product.find({ idCategory: idCategory}).populate('idCategory')
+        const products = await Product.find({ idCategory: idCategory, isVisible: true}).populate('idCategory')
         
         res.status(200).json({
 
