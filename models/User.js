@@ -6,17 +6,25 @@ const AutoIncrement = require('mongoose-sequence')(mongoose);
 
 const UserSchema = Schema({
 
-    user: {
+    name: {
         type: String,
         required: true
+    },
+
+    email: {
+        type: String,
+        required: true,
+        unique: true
     },
     pass:{
         type: String,
         required: true
     },
+
     isAdmin: {
         type: Boolean,
-        required: true
+        required: true,
+        default: false
     }
 
 });

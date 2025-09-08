@@ -12,8 +12,8 @@ const { request } = require('http');
 const app = express();
 
 app.use(cors({
-  //origin: ['http://localhost:5173'],
-  origin: ['https://www.starfactorysevillaadmin.com'],
+  origin: ['http://localhost:5173'],
+  //origin: ['https://www.starfactorysevillaadmin.com'],
   credentials: true,
   optionsSuccessStatus: 200
 }));
@@ -41,6 +41,9 @@ app.use( express.static('public'));
 app.use( express.json());
 
 //----------Rutas----------
+//Auth Usuarios
+app.use('/auth', require('./routes/auth'));
+
 //clientes
 app.use('/clients', require('./routes/clients'));
 app.use('/labels', require('./routes/labels'));
