@@ -19,13 +19,15 @@ const validateJWT = ( req, res = response ,next) =>{
     }
 
     try {
-        const { uid, name} = jwt.verify(
+        const { uid, name, isAdmin } = jwt.verify(
             token, 
             process.env.SECRET_JWT_SEED
         );
 
         req.uid = uid;
         req.name = name;
+        req.isAdmin = isAdmin;
+
 
     } catch (error) {
         return res.status(401).json({

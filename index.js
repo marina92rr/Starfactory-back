@@ -11,9 +11,12 @@ const { request } = require('http');
 //Crear servidor de Express
 const app = express();
 
+// index.js o app.js
+require('dotenv').config();
+
 app.use(cors({
-  //origin: ['http://localhost:5173'],
-  origin: ['https://www.starfactorysevillaadmin.com'],
+  origin: ['http://localhost:5173'],
+  //origin: ['https://www.starfactorysevillaadmin.com'],
   credentials: true,
   optionsSuccessStatus: 200
 }));
@@ -34,11 +37,13 @@ app.listen( process.env.PORT, () => {
     console.log(`Servidor ejecutandose en Puerto ${process.env.PORT}`);
 })
 
+//Lectura y parsero del body
+app.use( express.json());
+
 //Directorio publico
 app.use( express.static('public'));
 
-//Lectura y parsero del body
-app.use( express.json());
+
 
 //----------Rutas----------
 //Auth Usuarios

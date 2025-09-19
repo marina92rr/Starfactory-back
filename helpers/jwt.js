@@ -3,27 +3,24 @@ const jwt = require('jsonwebtoken');
 
 
 
-const generateJWT = (uid, name) =>{
+const generateJWT = (uid, name, isAdmin) => {
+  return new Promise((resolve, reject) => {
+    const payload = { uid, name, isAdmin };
+    const secret = process.env.SECRET_JWT_SEED;
 
-    return new Promise( (resolve, reject) => {
+    if (!secret) {
+      return reject(new Error('SECRET_JWT_SEED no está definida'));
+    }
 
-        const payload = { uid, name };
-
-        //Firma del Token que tiene payload, la palabra secreta de .env y opciones{ que expire el token en 2 horas}
-        jwt.sign( payload, process.env.SECRET_JWT_SEED, {
-            expiresIn: '400h'
-        }, ( err, token) =>{
-
-            if( err){
-                console.log( err );
-                reject(' No se pudo generar el token')
-            }
-
-            resolve( token);
-        })
-    })
-
-}
+    jwt.sign(payload, secret, /* opciones */ {}, (err, token) => {
+      if (err) {
+        console.error('[generateJWT] Error al firmar:', err.message);
+        return reject(err);
+      }
+      resolve(token);
+    });
+  });
+};
 
 module.exports = {
     generateJWT

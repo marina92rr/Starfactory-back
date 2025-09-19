@@ -12,6 +12,10 @@ const ClientSchema = Schema({
     email: {
         type: String,
     },
+    email2: {
+        type: String,
+        required: false,
+    },
     mainPhone: {
         type: String,
     },

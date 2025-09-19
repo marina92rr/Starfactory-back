@@ -1,7 +1,7 @@
 const {Router} = require('express');
 const { check } = require('express-validator');
 const { validateFields } = require('../middlewares/validate-fields');
-const { CreateUser, LoginUser, revalidateToken } = require('../constrollers/auth');
+const { CreateUser, LoginUser, revalidateToken, getUsers, updateUser, deleteUser } = require('../constrollers/auth');
 const { validateJWT } = require('../middlewares/validate-jwt');
 
 
@@ -21,7 +21,7 @@ router.post('/register',
 )
 
 //Login
-router.post('/',
+router.post('/login',
     [
         check('email', 'El email es obligatorio').isEmail(),
         check('password', 'La contraseña es obligatoria').not().isEmpty(),
@@ -29,7 +29,16 @@ router.post('/',
 
     ],
     LoginUser
-)
+),
+
+//getUser
+router.get('/users', validateJWT, getUsers);
+
+//updateUser
+router.put('/:idUser', validateJWT, updateUser);
+
+//deleteUser
+router.delete('/:idUser', validateJWT, deleteUser);
 
 
 //Renovar token

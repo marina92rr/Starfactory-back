@@ -79,6 +79,7 @@ const createClient = async (req, res = response) => {
       name: normalizeText(req.body.name),
       lastName: normalizeText(req.body.lastName),
       email: req.body.email,
+      email2: req.body.email2,
       idClient: req.body.idClient, // normaliza el ID si es texto
     };
 
