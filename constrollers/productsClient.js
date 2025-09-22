@@ -123,16 +123,15 @@ const createAdministrationProductClient = async (req, res) => {
       paymentDate
     } = req.body;
 
-    //si es negativo resta 
-    const amount = Number(price);
-    if (!Number.isFinite(amount) || amount <= 0) {
-      return res.status(400).json({ ok: false, msg: 'price debe ser un número > 0.' });
+ const amount = Number(price);
+    if (!Number.isFinite(amount)) {
+      return res.status(400).json({ ok: false, msg: 'price debe ser numérico.' });
     }
 
     const now = new Date();
 
     const newEntry = new ProductClient({
-      idClient: 0,
+      idClient: null,
       idProduct: 67,
       name: name,
       price: amount,

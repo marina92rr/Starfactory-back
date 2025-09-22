@@ -10,7 +10,7 @@ const ProductClientSchema = Schema({
 
     idClient: {
         type: Number,
-        required: false
+        default: null
     },
     idProduct: {
         type: Number,
