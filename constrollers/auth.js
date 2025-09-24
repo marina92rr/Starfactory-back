@@ -6,6 +6,8 @@ const User = require('../models/User'); //Usuario
 const { generateJWT } = require('../helpers/jwt');
 
 
+
+
 //Crear Usuario
 const CreateUser = async (req, res = response) => {
     const { email, password } = req.body;
@@ -52,6 +54,8 @@ const CreateUser = async (req, res = response) => {
 //Logearse
 const LoginUser = async (req, res = response) => {
     const { email, password } = req.body;
+
+
     try {
         const user = await User.findOne({ email });
         //Si el user no existe--> error
@@ -71,12 +75,13 @@ const LoginUser = async (req, res = response) => {
         }
 
         //Generar JSON WEB TOKEN JWT
-        const token = await generateJWT(user.id, user.name, user.isAdmin);
+        const token = await generateJWT(user.id, user.name, user.isAdmin, user.email);
 
         res.json({
             ok: true,
             uid: user.id,
             name: user.name,
+            email: user.email,
             isAdmin: user.isAdmin,
             token
         })
@@ -93,15 +98,16 @@ const LoginUser = async (req, res = response) => {
 
 //Revalidar token
 const revalidateToken = async (req, res = response) => {
-    const { uid, name, isAdmin } = req;
+    const { uid, name, isAdmin, email } = req;
     //Generar nuevo token JWT y retornarlo en peticion
-    const token = await generateJWT(uid, name, isAdmin);
+    const token = await generateJWT(uid, name, isAdmin, email);
 
     res.json({
         ok: true,
         uid,
         name,
         isAdmin,
+        email,
         token
     })
 }
@@ -196,6 +202,34 @@ const deleteUser = async (req, res = response) => {
     }
 }
 
+//Restaurar contraseña
+ const resetPassword = async (req, res = response) => {
+     const { email } = req.body;
+        try {
+            const user = await User.findOne({ email });
+            if (!user) {
+                return res.status(400).json({
+                    ok: false,
+                    msg: 'No existe un usuario con ese email'
+                });
+            }
+            //AEnviar el email de recuperación de contraseña
+            
+
+
+            res.json({  
+                ok: true,
+                msg: 'Se ha enviado un email para restablecer la contraseña'
+            });
+        } catch (error) {
+            console.error('[resetPassword]', error);
+            res.status(500).json({
+                ok: false,
+                msg: 'Hable con el administrador'
+            })
+        }   
+    }
+
 
 module.exports = {
     CreateUser,
@@ -204,5 +238,6 @@ module.exports = {
 
     getUsers,
     updateUser,
-    deleteUser
+    deleteUser,
+    resetPassword
 }   

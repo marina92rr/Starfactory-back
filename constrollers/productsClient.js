@@ -1,7 +1,5 @@
 const { response } = require("express");
 const ProductClient = require('../models/ProductClient');
-const Product = require("../models/store/Product");
-const Quota = require("../models/rates/Quota");
 const SuscriptionClient = require("../models/SuscriptionClient");
 const SalesClient = require("../models/SalesClient");
 

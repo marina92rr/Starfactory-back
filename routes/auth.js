@@ -1,7 +1,7 @@
 const {Router} = require('express');
 const { check } = require('express-validator');
 const { validateFields } = require('../middlewares/validate-fields');
-const { CreateUser, LoginUser, revalidateToken, getUsers, updateUser, deleteUser } = require('../constrollers/auth');
+const { CreateUser, LoginUser, revalidateToken, getUsers, updateUser, deleteUser, resetPassword } = require('../constrollers/auth');
 const { validateJWT } = require('../middlewares/validate-jwt');
 
 
@@ -44,6 +44,8 @@ router.delete('/:idUser', validateJWT, deleteUser);
 //Renovar token
 router.get('/renew', validateJWT, revalidateToken);
 
+//Restaurar contraseña
+//router.post('/resetPassword' , resetPassword);
 
 
 module.exports = router;    //Exportar rutas
