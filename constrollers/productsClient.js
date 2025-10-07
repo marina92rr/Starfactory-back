@@ -233,7 +233,7 @@ const updateProductClient = async (req, res = response) => {
   try {
     // Campos permitidos según paid
     const allowed = paid === false
-      ? ['paid', 'paymentMethod', 'discount']
+      ? ['paid', 'paymentMethod', 'price', 'discount']
       : ['name', 'price', 'paymentDate', 'paymentMethod', 'paid', 'discount'];
 
     // Construir updateData solo con los campos permitidos presentes en el body
