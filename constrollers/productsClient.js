@@ -121,7 +121,7 @@ const createAdministrationProductClient = async (req, res) => {
       paymentDate
     } = req.body;
 
- const amount = Number(price);
+    const amount = Number(price);
     if (!Number.isFinite(amount)) {
       return res.status(400).json({ ok: false, msg: 'price debe ser numérico.' });
     }
@@ -274,6 +274,31 @@ const updateProductClient = async (req, res = response) => {
   }
 };
 
+
+
+//------------------Actualizar producto de cliente (simple)------------------
+const updateTotalProductClient = async (req, res = response) => {
+  try {
+    const { idClient } = req.params;
+    const { paymentMethod } = req.body || {};
+
+    if (!paymentMethod || !['efectivo', 'tarjeta'].includes(paymentMethod)) {
+      return res.status(400).json({ ok: false, msg: 'paymentMethod requerido: efectivo | tarjeta' });
+    }
+
+
+    const result = await ProductClient.updateMany(
+      { idClient: idClient, paid: false },                // <- AQUÍ filtras en ProductClient
+      { $set: { paid: true, paymentMethod, paymentDate: new Date() } }
+    );
+
+    return res.json({ ok: true, modified: result.modifiedCount });
+  } catch (error) {
+     console.error('updateTotalProductClient error:', err);
+    return res.status(500).json({ ok: false, msg: 'Error en el servidor', error: err?.message });
+  }
+};
+
 //------------------eliminar productos de cliente------------------
 const deleteProductClient = async (req, res = response) => {
   const { idProductClient } = req.params;
@@ -346,6 +371,7 @@ module.exports = {
   getProductsClientUnpaid,
   createProductClient,
   updateProductClient,
+  updateTotalProductClient,
   deleteProductClient,
   getMonthlySummary,
   getPaymentMethodSummary,

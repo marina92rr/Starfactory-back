@@ -1,5 +1,5 @@
 const { Router } = require("express");
-const { getProductsClient, createProductClient, updateProductClient, deleteProductClient, getProductsClientUnpaid, getProductsClientPaid, getAllProductsClient, getMonthlySummary, getPaymentMethodSummary, createAdministrationProductClient } = require("../constrollers/productsClient");
+const { getProductsClient, createProductClient, updateProductClient, deleteProductClient, getProductsClientUnpaid, getProductsClientPaid, getAllProductsClient, getMonthlySummary, getPaymentMethodSummary, createAdministrationProductClient, updateTotalProductClient } = require("../constrollers/productsClient");
 
 
 //-----Rutas-----
@@ -26,6 +26,9 @@ router.put('/unpaid/:idProductClient', updateProductClient);
 
 //Eliminar Product
 router.delete('/unpaid/:idProductClient', deleteProductClient);
+
+//Cambiar totalProduct
+router.put('/totalunpaid/:idClient', updateTotalProductClient);
 
 // --- Nueva ruta ---
 // Resumen mensual de ventas
