@@ -138,7 +138,7 @@ async function run() {
       buyDate,
       paymentDate: null,
       price: s.price,
-      discount: 0,
+      discount: s.discount ?? 0,
       paymentMethod: s.paymentMethod || 'efectivo',
       paid: false,
     };

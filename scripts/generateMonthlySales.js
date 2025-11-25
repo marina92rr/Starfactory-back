@@ -83,7 +83,7 @@ async function generateMonthlySales() {
         buyDate,
         paymentDate: null,
         price: sub.price,
-        discount: 0,
+        discount: sub.discount ?? 0,
         paymentMethod: sub.paymentMethod || 'efectivo',
         paid: false,
       };
@@ -125,4 +125,3 @@ cron.schedule('0 23 27 * *', () => {
   timezone: "Europe/Madrid"
 });
 console.log('Este script debe mantenerse en ejecución para que el planificador funcione.');
-
