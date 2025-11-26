@@ -41,9 +41,7 @@ async function generateMonthlySales() {
     if (!activeSubs.length) {
       console.log('No se encontraron suscripciones activas. Tarea finalizada.');
       return;
-    } else {
-      console.log('Hay una disponible');
-    }
+    } 
 
     // 2. Cargar los nombres de las cuotas necesarias en una sola consulta
     const quotaIds = [...new Set(activeSubs.map(s => s.idQuota).filter(Boolean))];
