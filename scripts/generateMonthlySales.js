@@ -36,10 +36,13 @@ async function generateMonthlySales() {
 
     // 1. Buscar todas las suscripciones activas
     const activeSubs = await SuscriptionClient.find({ active: true });
+    //const activeSubs = await SuscriptionClient.find({ idClient: 3873 });
 
     if (!activeSubs.length) {
       console.log('No se encontraron suscripciones activas. Tarea finalizada.');
       return;
+    } else {
+      console.log('Hay una disponible');
     }
 
     // 2. Cargar los nombres de las cuotas necesarias en una sola consulta
@@ -117,8 +120,15 @@ async function generateMonthlySales() {
 // Programar la tarea para que se ejecute a las 19:05 del día 30 de cada mes.
 // Formato Cron: 'minuto hora día-del-mes mes día-de-la-semana'
 // '5 19 30 * *' significa a las 19:05 del día 30 del mes.
-cron.schedule('0 23 27 * *', () => {
-  console.log(`[CRON] Tarea disparada a las ${new Date().toISOString()}`);
+cron.schedule('59 23 * * *', () => {
+  // Comprobar si hoy es el último día del mes: si mañana es día 1, hoy es el último.
+  const now = new Date();
+  const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+  if (tomorrow.getDate() !== 1) {
+    console.log(`[CRON] Hoy no es el último día (${now.toISOString()}). Tarea omitida.`);
+    return;
+  }
+  console.log(`[CRON] Último día del mes - tarea disparada a las ${now.toISOString()}`);
   generateMonthlySales();
 }, {
   scheduled: true,
